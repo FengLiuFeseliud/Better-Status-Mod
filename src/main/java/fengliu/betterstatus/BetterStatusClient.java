@@ -1,16 +1,16 @@
 package fengliu.betterstatus;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BetterStatusClient implements ModInitializer {
+public class BetterStatusClient implements ClientModInitializer {
 	public static final String MOD_ID = "betterstatus";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 
 	@Override
-	public void onInitialize() {
+	public void onInitializeClient() {
 
 	}
 }
