@@ -20,15 +20,17 @@ public class StatusBar implements IBar {
     protected final int maxWidth;
     protected final int maxHeight;
     protected final int color;
-    protected BarOffsetItem[] barOffsetItems;
+    protected OffsetItem[] barOffsetItems;
     private float value = 0;
     private float maxValue = 0;
     private float oldValue = 0;
     private int oldValueShow = 0;
     private boolean oldValueShowEnd = false;
     private int progress = 0;
+    private BarIcon icon;
 
     public StatusBar(Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, int color, int emptyBarOffsetX, int emptyBarOffsetY){
+        this.icon = new BarIcon(null,  0, 0, 0, 0).setBar(this);
         this.textures = textures;
         this.texturesWidth = texturesWidth;
         this.texturesHeight = texturesHeight;
@@ -39,13 +41,18 @@ public class StatusBar implements IBar {
         this.color = color;
     }
 
+    public StatusBar(BarIcon icon, Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, int color, int emptyBarOffsetX, int emptyBarOffsetY){
+        this(textures, texturesWidth, texturesHeight, barWidth, barHeight, color, emptyBarOffsetX, emptyBarOffsetY);
+        this.icon = icon.setBar(this);
+    }
+
     @Override
     public Identifier getTextures() {
         return this.textures;
     }
 
     @Override
-    public StatusBar setBarOffsetVarietyGroup(BarOffsetItem[] items) {
+    public StatusBar setBarOffsetVarietyGroup(OffsetItem[] items) {
         this.barOffsetItems = items;
         return this;
     }
@@ -79,23 +86,28 @@ public class StatusBar implements IBar {
     }
 
     @Override
+    public float getMaxWidth() {
+        return this.maxWidth;
+    }
+
+    @Override
+    public float getMaxHeight() {
+        return this.maxHeight;
+    }
+
+    @Override
     public void drawBar(MatrixStack matrices, int x, int y) {
         RenderSystem.setShaderTexture(0, this.textures);
         DrawableHelper.drawTexture(matrices, x, y, this.emptyBarOffsetX, this.emptyBarOffsetY, this.maxWidth, this.maxHeight, this.texturesWidth, this.texturesHeight);
 
 
-        IBarOffsetItem lastItem = null;
-        for(IBarOffsetItem item: this.barOffsetItems){
-            if (item.canDraw(this.value, this.maxValue)){
-                lastItem = item;
-            }
-        }
-
+        IOffsetItem lastItem = IOffsetItem.getCanDrawItem(this.barOffsetItems, this.value, this.maxValue);
         if (lastItem == null){
             return;
         }
 
-        DrawableHelper.drawTexture(matrices, x, y, lastItem.barOffsetX(), lastItem.barOffsetY(), this.progress, this.maxHeight, this.texturesWidth, this.texturesHeight);
+        DrawableHelper.drawTexture(matrices, x, y, lastItem.offsetX(), lastItem.offsetY(), this.progress, this.maxHeight, this.texturesWidth, this.texturesHeight);
+        this.icon.drawIcon(matrices, x, y);
 
         String darValue = this.getBarValueString(this.value);
         textRenderer.draw(matrices, darValue, x + 41 - (float) (darValue.length() / 2 * 4.5), y + 1,  this.color);

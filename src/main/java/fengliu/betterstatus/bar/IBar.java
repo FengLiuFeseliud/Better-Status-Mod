@@ -16,6 +16,10 @@ public interface IBar {
      */
     float getMaxValue();
 
+    float getMaxWidth();
+
+    float getMaxHeight();
+
     /**
      * 获取栏材质
      * @return 材质
@@ -27,7 +31,7 @@ public interface IBar {
      * @param group 栏徧移量组数组
      * @return 栏自身
      */
-    IBar setBarOffsetVarietyGroup(BarOffsetItem[] group);
+    IBar setBarOffsetVarietyGroup(OffsetItem[] group);
 
     /**
      * 获取栏数值显示字符串

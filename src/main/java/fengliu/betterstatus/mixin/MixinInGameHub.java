@@ -1,7 +1,8 @@
 package fengliu.betterstatus.mixin;
 
 import fengliu.betterstatus.BetterStatusClient;
-import fengliu.betterstatus.bar.BarOffsetItem;
+import fengliu.betterstatus.bar.BarIcon;
+import fengliu.betterstatus.bar.OffsetItem;
 import fengliu.betterstatus.bar.StatusBar;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -23,129 +24,125 @@ public class MixinInGameHub {
     private static final Identifier BARS_TEXTURE = new Identifier(
         BetterStatusClient.MOD_ID, "textures/gui/bars.png"
     );
+    private static final Identifier BAR_ICONS_TEXTURE = new Identifier(
+        "minecraft", "textures/gui/icons.png"
+    );
     private static final int TEXTURE_Y = 180;
     private static final int TEXTURE_X = 81;
 
+    private static OffsetItem[] statusBarOffsetItemGroup(int[] offsetYs){
+        return new OffsetItem[]{
+            new OffsetItem(0, offsetYs[0]) {
+                @Override
+                public boolean canDraw(float value, float maxValue) {
+                    return value >= maxValue * 0.66;
+                }
+            },
+            new OffsetItem(0, offsetYs[1]) {
+                @Override
+                public boolean canDraw(float value, float maxValue) {
+                    return value < maxValue * 0.66 && value >= maxValue * 0.33;
+                }
+            },
+            new OffsetItem(0, offsetYs[2]) {
+                @Override
+                public boolean canDraw(float value, float maxValue) {
+                    return value < maxValue * 0.33;
+                }
+            }
+        };
+    }
+
     private static final StatusBar healthBar = new StatusBar(
+        new BarIcon(
+            BAR_ICONS_TEXTURE, 256, 256, 9, 9
+        ).setIconOffsetVarietyGroup(new OffsetItem[]{
+            new OffsetItem(52, 0) {
+                @Override
+                public boolean canDraw(float value, float maxValue) {
+                    return true;
+                }
+            },
+            new OffsetItem(124, 0) {
+                @Override
+                public boolean canDraw(float value, float maxValue) {
+                    return true;
+                }
+            },
+        }),
         BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, 0x000000, 0, 0
-    ).setBarOffsetVarietyGroup(new BarOffsetItem[]{
-        new BarOffsetItem(0, 27) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value <= maxValue;
-            }
-        },
-        new BarOffsetItem(0, 36) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value < maxValue * 0.66;
-            }
-        },
-        new BarOffsetItem(0, 45) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value < maxValue * 0.33;
-            }
-        }
-    });
+    ).setBarOffsetVarietyGroup(statusBarOffsetItemGroup(new int[]{27, 36, 45}));
 
     private static final StatusBar absorptionBar = new StatusBar(
+        new BarIcon(
+            BAR_ICONS_TEXTURE, 256, 256, 9, 9
+        ).setIconOffsetVarietyGroup(new OffsetItem[]{
+            new OffsetItem(160, 0) {
+                @Override
+                public boolean canDraw(float value, float maxValue) {
+                    return true;
+                }
+            },
+        }),
         BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, 0x000000, 0, 0
-    ).setBarOffsetVarietyGroup(new BarOffsetItem[]{
-        new BarOffsetItem(0, 54) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value <= maxValue;
-            }
-        },
-        new BarOffsetItem(0, 63) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value < maxValue * 0.66;
-            }
-        },
-        new BarOffsetItem(0, 72) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value < maxValue * 0.33;
-            }
-        }
-    });
+    ).setBarOffsetVarietyGroup(statusBarOffsetItemGroup(new int[]{54, 63, 72}));
 
     private static final StatusBar armorBar = new StatusBar(
+        new BarIcon(
+            BAR_ICONS_TEXTURE, 256, 256, 9, 9
+        ).setIconOffsetVarietyGroup(new OffsetItem[]{
+            new OffsetItem(43, 9) {
+                @Override
+                public boolean canDraw(float value, float maxValue) {
+                    return true;
+                }
+            },
+        }),
         BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, 0x000000, 0, 0
-    ).setBarOffsetVarietyGroup(new BarOffsetItem[]{
-        new BarOffsetItem(0, 81) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value <= maxValue;
-            }
-        },
-        new BarOffsetItem(0, 90) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value < maxValue * 0.66;
-            }
-        },
-        new BarOffsetItem(0, 99) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value < maxValue * 0.33;
-            }
+    ){
+        @Override
+        public String getBarValueString(float value) {
+            return String.valueOf((int) value);
         }
-    });
+    }.setBarOffsetVarietyGroup(statusBarOffsetItemGroup(new int[]{81, 90, 99}));
 
     private static final StatusBar hungerBar = new StatusBar(
+        new BarIcon(
+            BAR_ICONS_TEXTURE, 256, 256, 9, 9
+        ).inTail(true).setIconOffsetVarietyGroup(new OffsetItem[]{
+            new OffsetItem(52, 27) {
+                @Override
+                public boolean canDraw(float value, float maxValue) {
+                    return true;
+                }
+            },
+        }),
         BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, 0x000000, 0, 0
-    ).setBarOffsetVarietyGroup(new BarOffsetItem[]{
-        new BarOffsetItem(0, 108) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value <= maxValue;
-            }
-        },
-        new BarOffsetItem(0, 117) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value < maxValue * 0.66;
-            }
-        },
-        new BarOffsetItem(0, 126) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value < maxValue * 0.33;
-            }
+    ){
+        @Override
+        public String getBarValueString(float value) {
+            return String.valueOf((int) value);
         }
-    });
+    }.setBarOffsetVarietyGroup(statusBarOffsetItemGroup(new int[]{108, 117, 126}));
 
     private static final StatusBar airBar = new StatusBar(
+        new BarIcon(
+            BAR_ICONS_TEXTURE, 256, 256, 9, 9
+        ).inTail(true).setIconOffsetVarietyGroup(new OffsetItem[]{
+            new OffsetItem(16, 18) {
+                @Override
+                public boolean canDraw(float value, float maxValue) {
+                    return true;
+                }
+            },
+        }),
         BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, 0x000000, 0, 0
     ){
         @Override
         public String getBarValueString(float value) {
             return new DecimalFormat("##0.0%").format((value + 1.0) / (this.getMaxValue() * 1.0));
         }
-
-    }.setBarOffsetVarietyGroup(new BarOffsetItem[]{
-        new BarOffsetItem(0, 135) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value <= maxValue;
-            }
-        },
-        new BarOffsetItem(0, 144) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value < maxValue * 0.66;
-            }
-        },
-        new BarOffsetItem(0, 153) {
-            @Override
-            public boolean canDraw(float value, float maxValue) {
-                return value < maxValue * 0.33;
-            }
-        }
-    });
+    }.setBarOffsetVarietyGroup(statusBarOffsetItemGroup(new int[]{135, 144, 153}));
 
     @Overwrite
     private void renderStatusBars(MatrixStack matrices){
