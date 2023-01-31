@@ -1,9 +1,7 @@
 package fengliu.betterstatus.bar;
 
-import net.minecraft.client.MinecraftClient;
 
 public abstract class OffsetItem implements IOffsetItem {
-    protected static MinecraftClient client = MinecraftClient.getInstance();
     private final int offsetX;
     private final int offsetY;
 

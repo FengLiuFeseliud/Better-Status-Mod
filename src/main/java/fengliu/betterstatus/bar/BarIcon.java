@@ -1,11 +1,14 @@
 package fengliu.betterstatus.bar;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class BarIcon implements IBarIcon {
+    private static final MinecraftClient client = MinecraftClient.getInstance();
     private IBar bar = null;
     private final Identifier textures;
     private final int texturesWidth;
@@ -49,11 +52,12 @@ public class BarIcon implements IBarIcon {
 
     @Override
     public void drawIcon(MatrixStack matrices, int x, int y) {
-        if(this.bar == null || this.textures == null){
+        PlayerEntity player = client.player;
+        if(this.bar == null || this.textures == null || player == null){
             return;
         }
 
-        IOffsetItem lastItem = IOffsetItem.getCanDrawItem(this.iconOffsetItems, this.bar.getValue(), this.bar.getMaxValue());
+        IOffsetItem lastItem = IOffsetItem.getCanDrawItem(this.iconOffsetItems, this.bar.getValue(), this.bar.getMaxValue(), player);
         if (lastItem == null){
             return;
         }

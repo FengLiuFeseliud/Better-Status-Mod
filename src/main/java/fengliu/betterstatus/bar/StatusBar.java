@@ -6,43 +6,45 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.text.DecimalFormat;
 
 public class StatusBar implements IBar {
-    private static final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+    private static final MinecraftClient client = MinecraftClient.getInstance();
+    private static final TextRenderer textRenderer = client.textRenderer;
     public final Identifier textures;
     public final int texturesWidth;
     public final int texturesHeight;
-    protected final int emptyBarOffsetX;
-    protected final int emptyBarOffsetY;
+    protected final OffsetItem emptyBarOffset;
+    protected final OffsetItem twinkleBarOffset;
     protected final int maxWidth;
     protected final int maxHeight;
     protected final int color;
     protected OffsetItem[] barOffsetItems;
+    private BarIcon icon;
     private float value = 0;
     private float maxValue = 0;
     private float oldValue = 0;
     private int oldValueShow = 0;
     private boolean oldValueShowEnd = false;
     private int progress = 0;
-    private BarIcon icon;
 
-    public StatusBar(Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, int color, int emptyBarOffsetX, int emptyBarOffsetY){
+    public StatusBar(Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, int color, OffsetItem emptyBarOffset, OffsetItem twinkleBarOffset){
         this.icon = new BarIcon(null,  0, 0, 0, 0).setBar(this);
         this.textures = textures;
         this.texturesWidth = texturesWidth;
         this.texturesHeight = texturesHeight;
-        this.emptyBarOffsetX = emptyBarOffsetX;
-        this.emptyBarOffsetY = emptyBarOffsetY;
+        this.emptyBarOffset = emptyBarOffset;
+        this.twinkleBarOffset = twinkleBarOffset;
         this.maxWidth = barWidth;
         this.maxHeight = barHeight;
         this.color = color;
     }
 
-    public StatusBar(BarIcon icon, Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, int color, int emptyBarOffsetX, int emptyBarOffsetY){
-        this(textures, texturesWidth, texturesHeight, barWidth, barHeight, color, emptyBarOffsetX, emptyBarOffsetY);
+    public StatusBar(BarIcon icon, Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, int color, OffsetItem emptyBarOffset, OffsetItem twinkleBarOffset){
+        this(textures, texturesWidth, texturesHeight, barWidth, barHeight, color, emptyBarOffset, twinkleBarOffset);
         this.icon = icon.setBar(this);
     }
 
@@ -97,11 +99,19 @@ public class StatusBar implements IBar {
 
     @Override
     public void drawBar(MatrixStack matrices, int x, int y) {
+        PlayerEntity player = client.player;
+        if (player == null){
+            return;
+        }
+
+        if (!this.emptyBarOffset.canDraw(this.value, this.maxValue, player)){
+            return;
+        }
+
         RenderSystem.setShaderTexture(0, this.textures);
-        DrawableHelper.drawTexture(matrices, x, y, this.emptyBarOffsetX, this.emptyBarOffsetY, this.maxWidth, this.maxHeight, this.texturesWidth, this.texturesHeight);
+        DrawableHelper.drawTexture(matrices, x, y, this.emptyBarOffset.offsetX(), this.emptyBarOffset.offsetY(), this.maxWidth, this.maxHeight, this.texturesWidth, this.texturesHeight);
 
-
-        IOffsetItem lastItem = IOffsetItem.getCanDrawItem(this.barOffsetItems, this.value, this.maxValue);
+        IOffsetItem lastItem = IOffsetItem.getCanDrawItem(this.barOffsetItems, this.value, this.maxValue, player);
         if (lastItem == null){
             return;
         }
@@ -123,15 +133,21 @@ public class StatusBar implements IBar {
         }
 
         float downValue = this.oldValue - this.value;
-        if (downValue != 0 && !this.oldValueShowEnd){
-            if(downValue > 0){
-                textRenderer.draw(matrices, "-" + this.getBarValueString(downValue), x + this.maxWidth - 15, y + 1, color);
-            }
-
-            if(downValue < 0){
-                textRenderer.draw(matrices, "+" + this.getBarValueString(Math.abs(downValue)), x + this.maxWidth - 15, y + 1, color);
-            }
+        if (downValue == 0 || this.oldValueShowEnd){
+            return;
         }
 
+        if(downValue > 0){
+            textRenderer.draw(matrices, "-" + this.getBarValueString(downValue), x + this.maxWidth - 15, y + 1, color);
+        }
+
+        if(downValue < 0){
+            textRenderer.draw(matrices, "+" + this.getBarValueString(Math.abs(downValue)), x + this.maxWidth - 15, y + 1, color);
+        }
+
+        if (this.twinkleBarOffset.canDraw(this.value, this.maxValue, player)){
+            RenderSystem.setShaderTexture(0, this.textures);
+            DrawableHelper.drawTexture(matrices, x, y, this.twinkleBarOffset.offsetX(), this.twinkleBarOffset.offsetY(), this.maxWidth, this.maxHeight, this.texturesWidth, this.texturesHeight);
+        }
     }
 }

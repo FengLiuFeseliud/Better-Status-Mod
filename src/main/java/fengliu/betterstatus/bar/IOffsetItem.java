@@ -1,5 +1,7 @@
 package fengliu.betterstatus.bar;
 
+import net.minecraft.entity.player.PlayerEntity;
+
 public interface IOffsetItem {
 
     /**
@@ -20,7 +22,7 @@ public interface IOffsetItem {
      * @param maxValue 最大数值
      * @return true 可以绘制
      */
-    boolean canDraw(float value, float maxValue);
+    boolean canDraw(float value, float maxValue, PlayerEntity player);
 
     /**
      * 获取可以绘制的偏移量组, 没有为 null
@@ -29,9 +31,9 @@ public interface IOffsetItem {
      * @param maxValue 最大数值
      * @return 可以绘制的偏移量组, 没有为 null
      */
-    static IOffsetItem getCanDrawItem(IOffsetItem[] offsetItems, float value, float maxValue){
+    static IOffsetItem getCanDrawItem(IOffsetItem[] offsetItems, float value, float maxValue, PlayerEntity player){
         for(IOffsetItem item: offsetItems){
-            if (item.canDraw(value, maxValue)){
+            if (item.canDraw(value, maxValue, player)){
                 return item;
             }
         }
