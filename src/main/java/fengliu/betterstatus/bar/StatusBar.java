@@ -1,19 +1,19 @@
 package fengliu.betterstatus.bar;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 
 public class StatusBar implements IBar {
     private static final MinecraftClient client = MinecraftClient.getInstance();
-    private static final TextRenderer textRenderer = client.textRenderer;
+    protected static final TextRenderer textRenderer = client.textRenderer;
     public final Identifier textures;
     public final int texturesWidth;
     public final int texturesHeight;
@@ -24,15 +24,19 @@ public class StatusBar implements IBar {
     protected final int color;
     protected OffsetItem[] barOffsetItems;
     private BarIcon icon;
-    private float value = 0;
-    private float maxValue = 0;
-    private float oldValue = 0;
-    private int oldValueShow = 0;
-    private boolean oldValueShowEnd = false;
-    private int progress = 0;
+    protected float value = 0;
+    protected float maxValue = 0;
+    protected float oldValue = 0;
+    protected int oldValueShow = 0;
+    protected boolean oldValueShowEnd = false;
+    protected int progress = 0;
 
-    public StatusBar(Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, int color, OffsetItem emptyBarOffset, OffsetItem twinkleBarOffset){
-        this.icon = new BarIcon(null,  0, 0, 0, 0).setBar(this);
+    public StatusBar(@Nullable BarIcon icon, Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, int color, @Nullable OffsetItem emptyBarOffset, @Nullable OffsetItem twinkleBarOffset){
+        this.icon = icon;
+        if (this.icon != null){
+            this.icon = icon.setBar(this);
+        }
+
         this.textures = textures;
         this.texturesWidth = texturesWidth;
         this.texturesHeight = texturesHeight;
@@ -41,11 +45,6 @@ public class StatusBar implements IBar {
         this.maxWidth = barWidth;
         this.maxHeight = barHeight;
         this.color = color;
-    }
-
-    public StatusBar(BarIcon icon, Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, int color, OffsetItem emptyBarOffset, OffsetItem twinkleBarOffset){
-        this(textures, texturesWidth, texturesHeight, barWidth, barHeight, color, emptyBarOffset, twinkleBarOffset);
-        this.icon = icon.setBar(this);
     }
 
     @Override
@@ -97,31 +96,7 @@ public class StatusBar implements IBar {
         return this.maxHeight;
     }
 
-    @Override
-    public void drawBar(MatrixStack matrices, int x, int y) {
-        PlayerEntity player = client.player;
-        if (player == null){
-            return;
-        }
-
-        if (!this.emptyBarOffset.canDraw(this.value, this.maxValue, player)){
-            return;
-        }
-
-        RenderSystem.setShaderTexture(0, this.textures);
-        DrawableHelper.drawTexture(matrices, x, y, this.emptyBarOffset.offsetX(), this.emptyBarOffset.offsetY(), this.maxWidth, this.maxHeight, this.texturesWidth, this.texturesHeight);
-
-        IOffsetItem lastItem = IOffsetItem.getCanDrawItem(this.barOffsetItems, this.value, this.maxValue, player);
-        if (lastItem == null){
-            return;
-        }
-
-        DrawableHelper.drawTexture(matrices, x, y, lastItem.offsetX(), lastItem.offsetY(), this.progress, this.maxHeight, this.texturesWidth, this.texturesHeight);
-        this.icon.drawIcon(matrices, x, y);
-
-        String darValue = this.getBarValueString(this.value);
-        textRenderer.draw(matrices, darValue, x + 41 - (float) (darValue.length() / 2 * 4.5), y + 1,  this.color);
-
+    protected void resetOldValue(){
         if(this.value != this.oldValue && oldValueShowEnd){
             this.oldValueShowEnd = false;
             this.oldValueShow = 100;
@@ -131,7 +106,14 @@ public class StatusBar implements IBar {
             this.oldValueShowEnd = true;
             this.oldValue = this.value;
         }
+    }
 
+    @Override
+    public void drawValue(MatrixStack matrices, int x, int y) {
+        String darValue = this.getBarValueString(this.value);
+        textRenderer.draw(matrices, darValue, x + 41 - (float) (darValue.length() / 2 * 4.5), y + 1,  this.color);
+
+        this.resetOldValue();
         float downValue = this.oldValue - this.value;
         if (downValue == 0 || this.oldValueShowEnd){
             return;
@@ -144,10 +126,56 @@ public class StatusBar implements IBar {
         if(downValue < 0){
             textRenderer.draw(matrices, "+" + this.getBarValueString(Math.abs(downValue)), x + this.maxWidth - 15, y + 1, color);
         }
+    }
 
-        if (this.twinkleBarOffset.canDraw(this.value, this.maxValue, player)){
-            RenderSystem.setShaderTexture(0, this.textures);
-            DrawableHelper.drawTexture(matrices, x, y, this.twinkleBarOffset.offsetX(), this.twinkleBarOffset.offsetY(), this.maxWidth, this.maxHeight, this.texturesWidth, this.texturesHeight);
+    @Override
+    public void drawTwinkleBar(MatrixStack matrices, PlayerEntity player, int x, int y) {
+        if (!this.twinkleBarOffset.canDraw(this.value, this.maxValue, player)){
+            return;
         }
+
+        DrawableHelper.drawTexture(matrices, x, y, this.twinkleBarOffset.offsetX(), this.twinkleBarOffset.offsetY(), this.maxWidth, this.maxHeight, this.texturesWidth, this.texturesHeight);
+    }
+
+    @Override
+    public void drawValueBar(MatrixStack matrices, IOffsetItem barOffset, int x, int y) {
+        if (this.emptyBarOffset != null){
+            DrawableHelper.drawTexture(matrices, x, y, this.emptyBarOffset.offsetX(), this.emptyBarOffset.offsetY(), this.maxWidth, this.maxHeight, this.texturesWidth, this.texturesHeight);
+        }
+        DrawableHelper.drawTexture(matrices, x, y, barOffset.offsetX(), barOffset.offsetY(), this.progress, this.maxHeight, this.texturesWidth, this.texturesHeight);
+    }
+
+    @Override
+    public void drawBar(MatrixStack matrices, int x, int y) {
+        PlayerEntity player = client.player;
+        if (player == null){
+            return;
+        }
+
+        if (this.emptyBarOffset != null){
+            if (!this.emptyBarOffset.canDraw(this.value, this.maxValue, player)){
+                return;
+            }
+        }
+
+        IOffsetItem lastOffset = IOffsetItem.getCanDrawItem(this.barOffsetItems, this.value, this.maxValue, player);
+        if (lastOffset == null){
+            return;
+        }
+
+        RenderSystem.setShaderTexture(0, this.textures);
+        if (lastOffset.canDraw(this.value, this.maxValue, player)){
+            this.drawValueBar(matrices, lastOffset,  x, y);
+        }
+
+        if (!this.oldValueShowEnd && this.twinkleBarOffset != null){
+            this.drawTwinkleBar(matrices, player, x, y);
+        }
+
+        if (this.icon != null){
+            this.icon.drawIcon(matrices, x, y);
+        }
+
+        this.drawValue(matrices, x, y);
     }
 }

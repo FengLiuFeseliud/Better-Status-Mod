@@ -53,7 +53,7 @@ public class BarIcon implements IBarIcon {
     @Override
     public void drawIcon(MatrixStack matrices, int x, int y) {
         PlayerEntity player = client.player;
-        if(this.bar == null || this.textures == null || player == null){
+        if(player == null){
             return;
         }
 

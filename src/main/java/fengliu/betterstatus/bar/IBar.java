@@ -1,6 +1,7 @@
 package fengliu.betterstatus.bar;
 
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 public interface IBar {
@@ -53,6 +54,12 @@ public interface IBar {
      * @return 栏自身
      */
     IBar setProgress(float value, float maxValue);
+
+    void drawValue(MatrixStack matrices, int x, int y);
+
+    void drawTwinkleBar(MatrixStack matrices, PlayerEntity player, int x, int y);
+
+    void drawValueBar(MatrixStack matrices, IOffsetItem barOffset, int x, int y);
 
     /**
      * 绘制栏
