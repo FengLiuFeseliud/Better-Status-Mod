@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class BackStatusBar extends StatusBar {
 
-    public BackStatusBar(@Nullable BarIcon icon, Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, int color, OffsetItem emptyBarOffset, @Nullable OffsetItem twinkleBarOffset) {
-        super(icon, textures, texturesWidth, texturesHeight, barWidth, barHeight, color, emptyBarOffset, twinkleBarOffset);
+    public BackStatusBar(@Nullable BarIcon icon, Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, OffsetItem emptyBarOffset, @Nullable OffsetItem twinkleBarOffset) {
+        super(icon, textures, texturesWidth, texturesHeight, barWidth, barHeight, emptyBarOffset, twinkleBarOffset);
     }
 
     @Override

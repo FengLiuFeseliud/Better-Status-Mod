@@ -3,6 +3,7 @@ package fengliu.betterstatus.mixin;
 import com.mojang.blaze3d.systems.RenderSystem;
 import fengliu.betterstatus.BetterStatusClient;
 import fengliu.betterstatus.bar.*;
+import fengliu.betterstatus.config.Configs;
 import fengliu.betterstatus.util.KnapsackManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
@@ -36,6 +37,8 @@ public abstract class MixinInGameHub {
     );
     private static final int TEXTURE_Y = 240;
     private static final int TEXTURE_X = 81;
+    private int scaledWidth = 0;
+    private int scaledHeight = 0;
 
     private static OffsetItem[] statusBarOffsetItemGroup(int[] offsetYs){
         return new OffsetItem[]{
@@ -89,7 +92,7 @@ public abstract class MixinInGameHub {
                 }
             },
         }),
-        BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, 0x000000,
+        BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9,
         new OffsetItem(0, 0) {
             @Override
             public boolean canDraw(float value, float maxValue, PlayerEntity player) {
@@ -109,7 +112,7 @@ public abstract class MixinInGameHub {
                 }
             },
         }),
-        BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, 0x000000,
+        BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9,
         new OffsetItem(0, 0) {
             @Override
             public boolean canDraw(float value, float maxValue, PlayerEntity player) {
@@ -129,7 +132,7 @@ public abstract class MixinInGameHub {
                 }
             },
         }),
-        BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, 0x000000,
+        BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9,
         new OffsetItem(0, 0) {
             @Override
             public boolean canDraw(float value, float maxValue, PlayerEntity player) {
@@ -160,7 +163,7 @@ public abstract class MixinInGameHub {
                 }
             },
         }),
-        BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, 0x000000,
+        BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9,
         new OffsetItem(0, 0) {
             @Override
             public boolean canDraw(float value, float maxValue, PlayerEntity player) {
@@ -175,7 +178,7 @@ public abstract class MixinInGameHub {
     }.setBarOffsetVarietyGroup(statusBarOffsetItemGroup(new int[]{108, 117, 126}));
 
     private static final StatusBar foodSaturationBar = new StatusBar(
-        null, BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, 0x000000, null, new TwinkleBarOffset(0, 18)
+        null, BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, null, new TwinkleBarOffset(0, 18)
     ){
         @Override
         public String getBarValueString(float value) {
@@ -227,7 +230,7 @@ public abstract class MixinInGameHub {
                 }
             },
         }),
-        BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, 0x000000,
+        BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9,
         new OffsetItem(0, 0) {
             @Override
             public boolean canDraw(float value, float maxValue, PlayerEntity player) {
@@ -252,7 +255,7 @@ public abstract class MixinInGameHub {
                 }
             }
         }),
-        BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9, 0x000000,
+        BARS_TEXTURE, TEXTURE_X, TEXTURE_Y, 81, 9,
         new OffsetItem(0, 0) {
             @Override
             public boolean canDraw(float value, float maxValue, PlayerEntity player) {
@@ -263,17 +266,20 @@ public abstract class MixinInGameHub {
 
     private int[] getScaledXY(){
         Window window = this.client.getWindow();
-        int scaledWidth = window.getScaledWidth();
-        int scaledHeight = window.getScaledHeight();
-        int x = scaledWidth / 2 - 91;
-        int y = scaledHeight - 39;
+        this.scaledWidth = window.getScaledWidth();
+        this.scaledHeight = window.getScaledHeight();
+        int x = this.scaledWidth / 2 - 91;
+        int y = this.scaledHeight - 39;
 
         return new int[]{x, y};
     }
 
     private void drawHungerBar(MatrixStack matrices, PlayerEntity player, int x, int y){
         HungerManager hunger = player.getHungerManager();
-        hungerBar.setProgress(hunger.getFoodLevel(), 20).drawBar(matrices, x, y);
+        hungerBar.setColor(
+            Configs.GUI.HUNGER_VALUE_FONT_COLOR.getIntegerValue()
+        ).setProgress(hunger.getFoodLevel(), 20).drawBar(matrices, x, y);
+
 //        foodSaturationBar.setProgress(hunger.getSaturationLevel(), 20).drawBar(matrices, x, y);
     }
 
@@ -288,7 +294,10 @@ public abstract class MixinInGameHub {
         int x = scaled[0], y = scaled[1];
 
         float absorption = player.getAbsorptionAmount();
-        healthBar.setProgress(player.getHealth(), player.getMaxHealth()).drawBar(matrices, x, y);
+
+        healthBar.setColor(
+            Configs.GUI.HEALTH_VALUE_FONT_COLOR.getIntegerValue()
+        ).setProgress(player.getHealth(), player.getMaxHealth()).drawBar(matrices, x, y);
 
         if (riddenHeartBar.getValue() > 0){
             this.drawHungerBar(matrices, player, x + 101, y - 10);
@@ -300,18 +309,28 @@ public abstract class MixinInGameHub {
             maxAbsorption = absorption;
         }
 
-        absorptionBar.setProgress(absorption, maxAbsorption).drawBar(matrices, x, y - 10);
-        airBar.setProgress(player.getAir(), player.getMaxAir()).drawBar(matrices, x + 101, y - 10);
+        absorptionBar.setColor(
+            Configs.GUI.ABSORPTION_VALUE_FONT_COLOR.getIntegerValue()
+        ).setProgress(absorption, maxAbsorption).drawBar(matrices, x, y - 10);
 
-        armorBar.setProgress(player.getArmor(), 20);
+        airBar.setColor(
+            Configs.GUI.AIR_VALUE_FONT_COLOR.getIntegerValue()
+        ).setProgress(player.getAir(), player.getMaxAir()).drawBar(matrices, x + 101, y - 10);
+
+        armorBar.setColor(
+            Configs.GUI.ARMOR_VALUE_FONT_COLOR.getIntegerValue()
+        ).setProgress(player.getArmor(), 20);
+
         if(absorptionBar.getValue() == 0){
             armorBar.drawBar(matrices, x, y - 10);
         } else {
             armorBar.drawBar(matrices, x, y - 20);
         }
+
         KnapsackManager knapsackManager = new KnapsackManager(player);
         knapsackManager.drawItemsStatus(matrices, x + 195, y + 20);
         knapsackManager.drawArmorStackStatus(matrices, x - 50, y + 20);
+        knapsackManager.drawItemDangerStatusInfo(matrices,this.scaledWidth / 2, this.scaledHeight / 2 + 8);
     }
 
     @Overwrite

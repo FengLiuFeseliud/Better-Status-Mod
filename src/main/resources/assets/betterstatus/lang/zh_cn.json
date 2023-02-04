@@ -1,0 +1,37 @@
+{
+  "betterstatus.gui.configs.title": "更好状态显示 By FengLiuFeseliud",
+
+  "betterstatus.gui.tab.all": "全部",
+  "betterstatus.gui.tab.gui": "界面",
+  "betterstatus.gui.tab.hotkey": "热键",
+
+  "betterstatus.config.health.value.font.color": "生命值字符绘制颜色 | health.value.font.color",
+  "betterstatus.config.health.value.font.color.comment": "生命值字符绘制颜色, 包括生命数值变化字符 (默认 #00890000 深红色)",
+
+  "betterstatus.config.absorption.value.font.color": "伤害吸收值字符绘制颜色 | absorption.value.font.color",
+  "betterstatus.config.absorption.value.font.color.comment": "伤害吸收值字符绘制颜色, 包括伤害吸收数值变化字符 (默认 #00886023 深黄色)",
+
+  "betterstatus.config.armor.value.font.color": "护甲值字符绘制颜色 | armor.value.font.color",
+  "betterstatus.config.armor.value.font.color.comment": "护甲值字符绘制颜色, 包括护甲值变化字符 (默认 #008B8B8B 灰色)",
+
+  "betterstatus.config.hunger.value.font.color": "饥饿值字符绘制颜色 | hunger.value.font.color",
+  "betterstatus.config.hunger.value.font.color.comment": "饥饿值字符绘制颜色, 包括饥饿值变化字符 (默认 #00886241 深棕色)",
+
+  "betterstatus.config.air.value.font.color": "氧气值字符绘制颜色 | air.value.font.color",
+  "betterstatus.config.air.value.font.color.comment": "氧气值字符绘制颜色, 包括氧气值变化字符 (默认 #006F7D88 深蓝色)",
+
+  "betterstatus.config.item.status.font.color": "物品状态字符绘制颜色 | item.status.font.color",
+  "betterstatus.config.item.status.font.color.comment": "物品状态字符绘制颜色 (默认 #00FFFFFF 深蓝色)",
+
+  "betterstatus.config.item.status.attention.font.color": "注意物品状态字符绘制颜色 | item.status.attention.font.color",
+  "betterstatus.config.item.status.attention.font.color.comment": "注意物品状态字符绘制颜色, 比如物品到达某耐久使用颜色 (默认 #00FF8A00 橙色)",
+
+  "betterstatus.config.item.status.waring.font.color": "警告物品状态字符绘制颜色 | item.status.waring.font.color",
+  "betterstatus.config.item.status.waring.font.color.comment": "警告物品状态字符绘制颜色, 比如物品到达接近危险耐久使用颜色 (默认 #00FF0000 红色)",
+
+  "betterstatus.config.item.status.danger.font.color": "危险物品状态字符绘制颜色 | item.status.danger.font.color",
+  "betterstatus.config.item.status.danger.font.color.comment": "危险物品状态字符绘制颜色, 比如物品到达危险耐久使用颜色 (默认 #00FF0000 红色)",
+
+  "betterstatus.config.hotkey.open.config.gui": "打开配置菜单 | open.config.gui",
+  "betterstatus.config.hotkey.open.config.gui.comment": "打开该菜单"
+}

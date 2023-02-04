@@ -26,6 +26,8 @@ public interface IBar {
      */
     Identifier getTextures();
 
+    IBar setColor(int color);
+
     /**
      * 设置栏变化数组
      * @param group 栏徧移量组数组

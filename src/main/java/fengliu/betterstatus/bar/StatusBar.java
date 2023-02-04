@@ -21,7 +21,7 @@ public class StatusBar implements IBar {
     protected final OffsetItem twinkleBarOffset;
     protected final int maxWidth;
     protected final int maxHeight;
-    protected final int color;
+    protected int color = 0x000000;
     protected OffsetItem[] barOffsetItems;
     private BarIcon icon;
     protected float value = 0;
@@ -31,7 +31,7 @@ public class StatusBar implements IBar {
     protected boolean oldValueShowEnd = false;
     protected int progress = 0;
 
-    public StatusBar(@Nullable BarIcon icon, Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, int color, @Nullable OffsetItem emptyBarOffset, @Nullable OffsetItem twinkleBarOffset){
+    public StatusBar(@Nullable BarIcon icon, Identifier textures, int texturesWidth, int texturesHeight, int barWidth, int barHeight, @Nullable OffsetItem emptyBarOffset, @Nullable OffsetItem twinkleBarOffset){
         this.icon = icon;
         if (this.icon != null){
             this.icon = icon.setBar(this);
@@ -44,12 +44,17 @@ public class StatusBar implements IBar {
         this.twinkleBarOffset = twinkleBarOffset;
         this.maxWidth = barWidth;
         this.maxHeight = barHeight;
-        this.color = color;
     }
 
     @Override
     public Identifier getTextures() {
         return this.textures;
+    }
+
+    @Override
+    public IBar setColor(int color) {
+        this.color = color;
+        return this;
     }
 
     @Override

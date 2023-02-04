@@ -1,6 +1,11 @@
 package fengliu.betterstatus.util;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import fengliu.betterstatus.BetterStatusClient;
+import fengliu.betterstatus.config.Configs;
+import fi.dy.masa.malilib.config.options.ConfigColor;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,10 +24,18 @@ import java.util.Map;
 
 public class KnapsackManager {
     protected static final MinecraftClient client = MinecraftClient.getInstance();
+    protected static final Identifier BARS_TEXTURE = new Identifier(
+        BetterStatusClient.MOD_ID, "textures/gui/bars.png"
+    );
+    protected static final int TEXTURE_Y = 240;
+    protected static final int TEXTURE_X = 81;
+
+    protected final int itemStatusFontColor = Configs.GUI.ITEM_STATUS_FONT_COLOR.getIntegerValue();
     protected final ItemRenderer itemRenderer;
     protected PlayerEntity player;
     private final Map<Item, Integer> knapsack = new HashMap<>();
     protected int knapsackEmptyStack = 0;
+    protected boolean haveDangerItem = false;
 
     public KnapsackManager(PlayerEntity player) {
         this.itemRenderer = client.getItemRenderer();
@@ -44,9 +57,13 @@ public class KnapsackManager {
     /**
      * 统计潜影盒 Nbt 物品数量
      * @param itemStack 潜影盒
-     * @param nbt 潜影盒 nbt
      */
-    protected void readBoxItemsCount(ItemStack itemStack, NbtCompound nbt){
+    protected void readBoxItemsCount(ItemStack itemStack){
+        NbtCompound nbt = itemStack.getNbt();
+        if (!itemStack.hasNbt() || nbt == null){
+            return;
+        }
+
         if (!(itemStack.getItem() instanceof BlockItem) || !nbt.contains("BlockEntityTag", NbtCompound.COMPOUND_TYPE)){
             return;
         }
@@ -70,6 +87,16 @@ public class KnapsackManager {
         });
     }
 
+    protected void readItemStack(ItemStack stack){
+        if (stack.isEmpty() || stack.isOf(Items.AIR)){
+            this.knapsackEmptyStack += 1;
+            return;
+        }
+
+        this.addItemCount(stack);
+        this.readBoxItemsCount(stack);
+    }
+
     /**
      * 统计背包物品数量
      */
@@ -78,21 +105,11 @@ public class KnapsackManager {
         this.knapsackEmptyStack = 0;
 
         PlayerInventory inventory = player.getInventory();
-        for(int slot = 0; slot < inventory.main.size(); slot++){
-            ItemStack itemStack = inventory.getStack(slot);
-            if (itemStack.isEmpty() || itemStack.isOf(Items.AIR)){
-                this.knapsackEmptyStack += 1;
-                continue;
-            }
-
-            this.addItemCount(itemStack);
-            NbtCompound nbt = itemStack.getNbt();
-            if (!itemStack.hasNbt() || nbt == null){
-                continue;
-            }
-
-            this.readBoxItemsCount(itemStack, nbt);
+        for(ItemStack stack: inventory.main){
+            this.readItemStack(stack);
         }
+
+        this.readItemStack(inventory.offHand.get(0));
     }
 
     /**
@@ -109,6 +126,50 @@ public class KnapsackManager {
         return this.knapsack.get(item);
     }
 
+    private enum Ponderance {
+        SAFE(0.66f, Configs.GUI.ITEM_STATUS_FONT_COLOR),
+        ATTENTION(0.33f, Configs.GUI.ITEM_STATUS_ATTENTION_FONT_COLOR),
+        WARNING(0.10f, Configs.GUI.ITEM_STATUS_WARNING_FONT_COLOR),
+        DANGER(0, Configs.GUI.ITEM_STATUS_DANGER_FONT_COLOR);
+
+        private final float percent;
+        private final ConfigColor color;
+
+        public static Ponderance getPonderance(int value, int maxValue){
+            for (Ponderance ponderance: Ponderance.values()) {
+                if (!ponderance.canUse(value, maxValue)){
+                    continue;
+                }
+
+                return ponderance;
+            }
+
+            return SAFE;
+        }
+
+        Ponderance(float percent, ConfigColor color){
+            this.percent = percent;
+            this.color = color;
+        }
+
+        public boolean canUse(int value, int maxValue){
+            return value >= maxValue * this.percent;
+        }
+
+        public int getColor() {
+            return this.color.getIntegerValue();
+        }
+    }
+
+    protected Ponderance getPonderance(int value, int maxValue){
+        Ponderance ponderance = Ponderance.getPonderance(value, maxValue);
+        if (ponderance == Ponderance.DANGER){
+            this.haveDangerItem = true;
+        }
+
+        return ponderance;
+    }
+
     /**
      * 绘制背包空格状态
      * @param matrices matrices
@@ -119,7 +180,7 @@ public class KnapsackManager {
         this.itemRenderer.renderInGui(new ItemStack(Items.CHEST), x, y);
 
         String emptyStackCountString = String.valueOf(this.knapsackEmptyStack);
-        client.textRenderer.draw(matrices, emptyStackCountString, x + 20, y + 4,  0xffffff);
+        client.textRenderer.draw(matrices, emptyStackCountString, x + 20, y + 4, Ponderance.getPonderance(this.knapsackEmptyStack, PlayerInventory.MAIN_SIZE).getColor());
     }
 
     /**
@@ -131,7 +192,7 @@ public class KnapsackManager {
      */
     public void drawItemAllCount(ItemStack itemStack, MatrixStack matrices, int x, int y){
         String itemAllCountString = String.valueOf(this.getKnapsackItemAllCount(itemStack));
-        client.textRenderer.draw(matrices, itemAllCountString, x, y + 4,  0xffffff);
+        client.textRenderer.draw(matrices, itemAllCountString, x, y + 4,  this.itemStatusFontColor);
     }
 
     /**
@@ -143,7 +204,7 @@ public class KnapsackManager {
      */
     public void drawBackItemAllCount(ItemStack itemStack, MatrixStack matrices, int x, int y){
         String itemAllCountString = String.valueOf(this.getKnapsackItemAllCount(itemStack));
-        client.textRenderer.draw(matrices, itemAllCountString, x - itemAllCountString.length() * 5, y + 4,  0xffffff);
+        client.textRenderer.draw(matrices, itemAllCountString, x - itemAllCountString.length() * 5, y + 4,  this.itemStatusFontColor);
     }
 
     /**
@@ -155,7 +216,14 @@ public class KnapsackManager {
      */
     public void drawItemDamage(ItemStack itemStack, MatrixStack matrices, int x, int y){
         int maxDamage = itemStack.getMaxDamage();
-        client.textRenderer.draw(matrices, maxDamage - itemStack.getDamage() + " / " + maxDamage, x, y + 4,  0xffffff);
+        int damage = maxDamage - itemStack.getDamage();
+
+        Ponderance ponderance = Ponderance.getPonderance(damage, maxDamage);
+        if (ponderance == Ponderance.DANGER){
+            this.haveDangerItem = true;
+        }
+
+        client.textRenderer.draw(matrices, damage + " / " + maxDamage, x, y + 4,  this.getPonderance(damage, maxDamage).getColor());
     }
 
     /**
@@ -167,8 +235,9 @@ public class KnapsackManager {
      */
     public void drawBackItemDamage(ItemStack itemStack, MatrixStack matrices, int x, int y){
         int maxDamage = itemStack.getMaxDamage();
-        String damageString = maxDamage - itemStack.getDamage() + " / " + maxDamage;
-        client.textRenderer.draw(matrices, damageString, x - damageString.length() * 5, y + 4,  0xffffff);
+        int damage = maxDamage - itemStack.getDamage();
+        String damageString = damage + " / " + maxDamage;
+        client.textRenderer.draw(matrices, damageString, x - damageString.length() * 5, y + 4,  this.getPonderance(damage, maxDamage).getColor());
     }
 
     /**
@@ -247,4 +316,18 @@ public class KnapsackManager {
         this.drawItemStackStatus(offHandStack, matrices, x, y - 18);
     }
 
+    /**
+     * 绘制主手物品, 副手物品 耐久警告
+     * @param matrices matrices
+     * @param x 绘制所在 X 轴
+     * @param y 绘制所在 Y 轴
+     */
+    public void drawItemDangerStatusInfo(MatrixStack matrices, int x, int y){
+        if (!this.haveDangerItem){
+            return;
+        }
+
+        RenderSystem.setShaderTexture(0, BARS_TEXTURE);
+        DrawableHelper.drawTexture(matrices, x - 3, y, 0, 180, 6, 12, TEXTURE_X, TEXTURE_Y);
+    }
 }
