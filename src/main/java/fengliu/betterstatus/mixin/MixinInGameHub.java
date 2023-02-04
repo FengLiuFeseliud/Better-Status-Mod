@@ -309,8 +309,9 @@ public abstract class MixinInGameHub {
         } else {
             armorBar.drawBar(matrices, x, y - 20);
         }
-
-        new KnapsackManager(player).drawKnapsackStatus(matrices, x + 195, y + 20);
+        KnapsackManager knapsackManager = new KnapsackManager(player);
+        knapsackManager.drawItemsStatus(matrices, x + 195, y + 20);
+        knapsackManager.drawArmorStackStatus(matrices, x - 50, y + 20);
     }
 
     @Overwrite

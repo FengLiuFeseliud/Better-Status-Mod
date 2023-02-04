@@ -108,8 +108,13 @@ public class StatusBar implements IBar {
         }
     }
 
-    @Override
-    public void drawValue(MatrixStack matrices, int x, int y) {
+    /**
+     * 绘制条数值变化
+     * @param matrices matrices
+     * @param x 绘制所在 X 轴
+     * @param y 绘制所在 Y 轴
+     */
+    protected void drawValue(MatrixStack matrices, int x, int y) {
         String darValue = this.getBarValueString(this.value);
         textRenderer.draw(matrices, darValue, x + 41 - (float) (darValue.length() / 2 * 4.5), y + 1,  this.color);
 
@@ -128,8 +133,14 @@ public class StatusBar implements IBar {
         }
     }
 
-    @Override
-    public void drawTwinkleBar(MatrixStack matrices, PlayerEntity player, int x, int y) {
+    /**
+     * 绘制条闪烁效果
+     * @param matrices matrices
+     * @param player 玩家
+     * @param x 绘制所在 X 轴
+     * @param y 绘制所在 Y 轴
+     */
+    protected void drawTwinkleBar(MatrixStack matrices, PlayerEntity player, int x, int y) {
         if (!this.twinkleBarOffset.canDraw(this.value, this.maxValue, player)){
             return;
         }
@@ -137,8 +148,14 @@ public class StatusBar implements IBar {
         DrawableHelper.drawTexture(matrices, x, y, this.twinkleBarOffset.offsetX(), this.twinkleBarOffset.offsetY(), this.maxWidth, this.maxHeight, this.texturesWidth, this.texturesHeight);
     }
 
-    @Override
-    public void drawValueBar(MatrixStack matrices, IOffsetItem barOffset, int x, int y) {
+    /**
+     * 绘制基础条
+     * @param matrices matrices
+     * @param barOffset 条材质偏移量对
+     * @param x 绘制所在 X 轴
+     * @param y 绘制所在 Y 轴
+     */
+    protected void drawValueBar(MatrixStack matrices, IOffsetItem barOffset, int x, int y) {
         if (this.emptyBarOffset != null){
             DrawableHelper.drawTexture(matrices, x, y, this.emptyBarOffset.offsetX(), this.emptyBarOffset.offsetY(), this.maxWidth, this.maxHeight, this.texturesWidth, this.texturesHeight);
         }
