@@ -7,6 +7,7 @@ import fengliu.betterstatus.BetterStatusClient;
 import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigHandler;
+import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
 import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.util.FileUtils;
@@ -20,6 +21,12 @@ public class Configs implements IConfigHandler {
     private static final String CONFIG_FILE_NAME = BetterStatusClient.MOD_ID + ".json";
 
     public static class ALL {
+        public static final ConfigBooleanHotkeyed DRAW_ITEMS_STATUS = new ConfigBooleanHotkeyed("betterstatus.config.draw.item.status", true, "", "betterstatus.config.draw.item.status.comment", "betterstatus.config.draw.item.status.pretty");
+        public static final ConfigBooleanHotkeyed DRAW_HAND_ITEM_ENCHANTMENTS = new ConfigBooleanHotkeyed("betterstatus.config.draw.hand.item.enchantments", true, "", "betterstatus.config.draw.hand.item.enchantments.comment", "betterstatus.config.draw.hand.item.enchantments.pretty");
+        public static final ConfigBooleanHotkeyed DRAW_MAIN_HAND_ITEM_ENCHANTMENTS = new ConfigBooleanHotkeyed("betterstatus.config.draw.main.hand.item.enchantments", true, "", "betterstatus.config.draw.main.hand.item.enchantments.comment", "betterstatus.config.draw.main.hand.item.enchantments.pretty");
+        public static final ConfigBooleanHotkeyed DRAW_OFFSET_HAND_ITEM_ENCHANTMENTS = new ConfigBooleanHotkeyed("betterstatus.config.draw.offset.hand.item.enchantments", true, "", "betterstatus.config.draw.offset.hand.item.enchantments.comment", "betterstatus.config.draw.offset.hand.item.enchantments.pretty");
+        public static final ConfigBooleanHotkeyed DRAW_ARMORS_STATUS = new ConfigBooleanHotkeyed("betterstatus.config.draw.armors.status", true, "", "betterstatus.config.draw.armors.status.comment", "betterstatus.config.draw.armors.status.pretty");
+        public static final ConfigBooleanHotkeyed DRAW_ITEMS_DANGER_STATUS_INFO = new ConfigBooleanHotkeyed("betterstatus.config.draw.item.danger.status.info", true, "", "betterstatus.config.draw.item.danger.status.info.comment", "betterstatus.config.draw.item.danger.status.info.pretty");
         public static final ConfigColor HEALTH_VALUE_FONT_COLOR = new ConfigColor("betterstatus.config.health.value.font.color", "#00890000", "betterstatus.config.health.value.font.color.comment");
         public static final ConfigColor ABSORPTION_VALUE_FONT_COLOR = new ConfigColor("betterstatus.config.absorption.value.font.color", "#00886023", "betterstatus.config.absorption.value.font.color.comment");
         public static final ConfigColor ARMOR_VALUE_FONT_COLOR = new ConfigColor("betterstatus.config.armor.value.font.color", "#008B8B8B", "betterstatus.config.armor.value.font.color.comment");
@@ -32,6 +39,12 @@ public class Configs implements IConfigHandler {
         public static final ConfigHotkey OPEN_CONFIG_GUI = new ConfigHotkey("betterstatus.config.hotkey.open.config.gui", "LEFT_CONTROL,B", "betterstatus.config.hotkey.open.config.gui.comment");
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
+            DRAW_ITEMS_STATUS,
+            DRAW_HAND_ITEM_ENCHANTMENTS,
+            DRAW_MAIN_HAND_ITEM_ENCHANTMENTS,
+            DRAW_OFFSET_HAND_ITEM_ENCHANTMENTS,
+            DRAW_ARMORS_STATUS,
+            DRAW_ITEMS_DANGER_STATUS_INFO,
             HEALTH_VALUE_FONT_COLOR,
             ABSORPTION_VALUE_FONT_COLOR,
             ARMOR_VALUE_FONT_COLOR,
@@ -42,6 +55,24 @@ public class Configs implements IConfigHandler {
             ITEM_STATUS_WARNING_FONT_COLOR,
             ITEM_STATUS_DANGER_FONT_COLOR,
             OPEN_CONFIG_GUI
+        );
+    }
+
+    public static class ENABLE {
+        public static final ConfigBooleanHotkeyed DRAW_ITEMS_STATUS = ALL.DRAW_ITEMS_STATUS;
+        public static final ConfigBooleanHotkeyed DRAW_HAND_ITEM_ENCHANTMENTS = ALL.DRAW_HAND_ITEM_ENCHANTMENTS;
+        public static final ConfigBooleanHotkeyed DRAW_MAIN_HAND_ITEM_ENCHANTMENTS = ALL.DRAW_MAIN_HAND_ITEM_ENCHANTMENTS;
+        public static final ConfigBooleanHotkeyed DRAW_OFFSET_HAND_ITEM_ENCHANTMENTS = ALL.DRAW_OFFSET_HAND_ITEM_ENCHANTMENTS;
+        public static final ConfigBooleanHotkeyed DRAW_ARMORS_STATUS = ALL.DRAW_ARMORS_STATUS;
+        public static final ConfigBooleanHotkeyed DRAW_ITEMS_DANGER_STATUS_INFO = ALL.DRAW_ITEMS_DANGER_STATUS_INFO;
+
+        public static final ImmutableList<ConfigBooleanHotkeyed> HOTKEY_LIST = ImmutableList.of(
+            DRAW_ITEMS_STATUS,
+            DRAW_HAND_ITEM_ENCHANTMENTS,
+            DRAW_MAIN_HAND_ITEM_ENCHANTMENTS,
+            DRAW_OFFSET_HAND_ITEM_ENCHANTMENTS,
+            DRAW_ARMORS_STATUS,
+            DRAW_ITEMS_DANGER_STATUS_INFO
         );
     }
 

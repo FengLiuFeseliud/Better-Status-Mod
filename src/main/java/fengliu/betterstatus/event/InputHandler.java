@@ -2,6 +2,7 @@ package fengliu.betterstatus.event;
 
 import fengliu.betterstatus.BetterStatusClient;
 import fengliu.betterstatus.config.Configs;
+import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
 import fi.dy.masa.malilib.hotkeys.*;
 
 public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IMouseInputHandler {
@@ -13,6 +14,10 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
 
     @Override
     public void addKeysToMap(IKeybindManager manager) {
+        for (ConfigBooleanHotkeyed configHotkey : Configs.ENABLE.HOTKEY_LIST) {
+            manager.addKeybindToMap(configHotkey.getKeybind());
+        }
+
         for (IHotkey hotkey : Configs.HOTKEY.HOTKEY_LIST) {
             manager.addKeybindToMap(hotkey.getKeybind());
         }
@@ -20,6 +25,7 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
 
     @Override
     public void addHotkeys(IKeybindManager manager) {
-        manager.addHotkeysForCategory(BetterStatusClient.MOD_ID, "cloudmusic.hotkeys", Configs.HOTKEY.HOTKEY_LIST);
+        manager.addHotkeysForCategory(BetterStatusClient.MOD_ID, "betterstatus.enable.hotkeys", Configs.ENABLE.HOTKEY_LIST);
+        manager.addHotkeysForCategory(BetterStatusClient.MOD_ID, "betterstatus.hotkeys", Configs.HOTKEY.HOTKEY_LIST);
     }
 }

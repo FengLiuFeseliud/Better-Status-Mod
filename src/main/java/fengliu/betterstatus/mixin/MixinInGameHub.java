@@ -328,9 +328,27 @@ public abstract class MixinInGameHub {
         }
 
         KnapsackManager knapsackManager = new KnapsackManager(player);
-        knapsackManager.drawItemsStatus(matrices, x + 195, y + 20);
-        knapsackManager.drawArmorStackStatus(matrices, x - 50, y + 20);
-        knapsackManager.drawItemDangerStatusInfo(matrices,this.scaledWidth / 2, this.scaledHeight / 2 + 8);
+        if (Configs.ENABLE.DRAW_ITEMS_STATUS.getBooleanValue()){
+            knapsackManager.drawItemsStatus(matrices, x + 195, y + 20);
+        }
+
+        if (Configs.ENABLE.DRAW_HAND_ITEM_ENCHANTMENTS.getBooleanValue()){
+            if (Configs.ENABLE.DRAW_MAIN_HAND_ITEM_ENCHANTMENTS.getBooleanValue()){
+                knapsackManager.drawItemEnchantments(player.getMainHandStack(), matrices, x + 285, y + 23);
+            }
+
+            if (Configs.ENABLE.DRAW_OFFSET_HAND_ITEM_ENCHANTMENTS.getBooleanValue()){
+                knapsackManager.drawItemEnchantments(player.getOffHandStack(), matrices, x - 145, y + 23);
+            }
+        }
+
+        if (Configs.ENABLE.DRAW_ARMORS_STATUS.getBooleanValue()){
+            knapsackManager.drawArmorStackStatus(matrices, x - 50, y + 20);
+        }
+
+        if (Configs.ENABLE.DRAW_ITEMS_DANGER_STATUS_INFO.getBooleanValue()){
+            knapsackManager.drawItemDangerStatusInfo(matrices,this.scaledWidth / 2, this.scaledHeight / 2 + 8);
+        }
     }
 
     @Overwrite

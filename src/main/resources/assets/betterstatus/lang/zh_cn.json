@@ -2,8 +2,33 @@
   "betterstatus.gui.configs.title": "更好状态显示 By FengLiuFeseliud",
 
   "betterstatus.gui.tab.all": "全部",
+  "betterstatus.gui.tab.enable": "启用",
   "betterstatus.gui.tab.gui": "界面",
   "betterstatus.gui.tab.hotkey": "热键",
+
+  "betterstatus.config.draw.item.status": "启用主副手物品与背包空余绘制 | item.status",
+  "betterstatus.config.draw.item.status.comment": "绘制主副手物品数量或耐久, 并绘制背包空余格数",
+  "betterstatus.config.draw.item.status.pretty": "主副手物品数量或耐久",
+
+  "betterstatus.config.draw.hand.item.enchantments": "启用主副手附魔信息绘制 | hand.item.enchantments",
+  "betterstatus.config.draw.hand.item.enchantments.comment": "绘制主副手物品附魔信息",
+  "betterstatus.config.draw.hand.item.enchantments.pretty": "主副手物品附魔信息",
+
+  "betterstatus.config.draw.main.hand.item.enchantments": "启用主手附魔信息绘制 | main.hand.item.enchantments",
+  "betterstatus.config.draw.main.hand.item.enchantments.comment": "绘制主手物品附魔信息",
+  "betterstatus.config.draw.main.hand.item.enchantments.pretty": "主手物品附魔信息",
+
+  "betterstatus.config.draw.offset.hand.item.enchantments": "启用副手附魔信息绘制 | offset.hand.item.enchantments",
+  "betterstatus.config.draw.offset.hand.item.enchantments.comment": "绘制副手物品附魔信息",
+  "betterstatus.config.draw.offset.hand.item.enchantments.pretty": "副手物品附魔信息",
+
+  "betterstatus.config.draw.armors.status": "启用盔甲耐久信息绘制 | armors.status",
+  "betterstatus.config.draw.armors.status.comment": "绘制盔甲耐久信息",
+  "betterstatus.config.draw.armors.status.pretty": "盔甲耐久信息",
+
+  "betterstatus.config.draw.item.danger.status.info": "启用物品耐久警告信息绘制 | item.danger.status.info",
+  "betterstatus.config.draw.item.danger.status.info.comment": "当物品耐久到达界线, 在指针下方绘制警告图标",
+  "betterstatus.config.draw.item.danger.status.info.pretty": "物品耐久警告",
 
   "betterstatus.config.health.value.font.color": "生命值字符绘制颜色 | health.value.font.color",
   "betterstatus.config.health.value.font.color.comment": "生命值字符绘制颜色, 包括生命数值变化字符 (默认 #00890000 深红色)",

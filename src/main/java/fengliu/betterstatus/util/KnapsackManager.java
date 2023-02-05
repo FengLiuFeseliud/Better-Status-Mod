@@ -8,6 +8,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
@@ -21,6 +23,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class KnapsackManager {
     protected static final MinecraftClient client = MinecraftClient.getInstance();
@@ -292,6 +295,10 @@ public class KnapsackManager {
         PlayerInventory inventory = this.player.getInventory();
 
         for (ItemStack armorItem: inventory.armor) {
+            if (armorItem.isEmpty()){
+                continue;
+            }
+
             this.drawBackItemStackStatus(armorItem, matrices, x, y);
             y -= 18;
         }
@@ -304,16 +311,48 @@ public class KnapsackManager {
      * @param y 绘制所在 Y 轴
      */
     public void drawItemsStatus(MatrixStack matrices, int x, int y){
-        this.drawItemStackStatus(this.player.getMainHandStack(), matrices, x, y);
-
+        ItemStack mainHandStack = this.player.getMainHandStack();
         ItemStack offHandStack = this.player.getOffHandStack();
+        if (mainHandStack.isEmpty() && offHandStack.isEmpty()){
+            this.drawKnapsackEmptyStackCount(matrices, x, y);
+            return;
+        }
+
+        if (mainHandStack.isEmpty()){
+            this.drawKnapsackEmptyStackCount(matrices, x, y - 18);
+            this.drawItemStackStatus(offHandStack, matrices, x, y);
+            return;
+
+        }
+
+        this.drawItemStackStatus(mainHandStack, matrices, x, y);
         if (offHandStack.isEmpty()){
             this.drawKnapsackEmptyStackCount(matrices, x, y - 18);
             return;
         }
 
-        this.drawKnapsackEmptyStackCount(matrices, x, y - 36);
         this.drawItemStackStatus(offHandStack, matrices, x, y - 18);
+        this.drawKnapsackEmptyStackCount(matrices, x, y - 36);
+    }
+
+    /**
+     * 绘制物品附魔信息
+     * @param itemStack 物品格
+     * @param matrices matrices
+     * @param x 绘制所在 X 轴
+     * @param y 绘制所在 Y 轴
+     */
+    public void drawItemEnchantments(ItemStack itemStack, MatrixStack matrices, int x, int y){
+        if (itemStack.isEmpty()){
+            return;
+        }
+
+        for(Entry<Enchantment, Integer> enchantment :EnchantmentHelper.get(itemStack).entrySet()){
+            client.textRenderer.draw(matrices,
+                enchantment.getKey().getName(enchantment.getValue()), x, y, this.itemStatusFontColor
+            );
+            y -= 18;
+        }
     }
 
     /**

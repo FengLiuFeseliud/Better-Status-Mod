@@ -16,6 +16,7 @@ public class ConfigGui extends GuiConfigsBase {
 
     public enum ConfigGuiTab {
         ALL("betterstatus.gui.tab.all"),
+        ENABLE("betterstatus.gui.tab.enable"),
         GUI("betterstatus.gui.tab.gui"),
         HOTKEY("betterstatus.gui.tab.hotkey");
 
@@ -90,6 +91,8 @@ public class ConfigGui extends GuiConfigsBase {
 
         if (tab == ConfigGuiTab.ALL) {
             configs = Configs.ALL.OPTIONS;
+        } else if(tab == ConfigGuiTab.ENABLE){
+            configs = Configs.ENABLE.HOTKEY_LIST;
         } else if(tab == ConfigGuiTab.GUI){
             configs = Configs.GUI.OPTIONS;
         } else if(tab == ConfigGuiTab.HOTKEY){
