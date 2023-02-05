@@ -10,6 +10,7 @@ import fi.dy.masa.malilib.config.IConfigHandler;
 import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
 import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
+import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
 
@@ -22,6 +23,7 @@ public class Configs implements IConfigHandler {
 
     public static class ALL {
         public static final ConfigBooleanHotkeyed DRAW_ITEMS_STATUS = new ConfigBooleanHotkeyed("betterstatus.config.draw.item.status", true, "", "betterstatus.config.draw.item.status.comment", "betterstatus.config.draw.item.status.pretty");
+        public static final ConfigBooleanHotkeyed DRAW_ITEM_DAMAGE_PERCENTAGE = new ConfigBooleanHotkeyed("betterstatus.config.draw.item.damage.percentage", false, "", "betterstatus.config.draw.item.damage.percentage.comment", "betterstatus.config.draw.item.damage.percentage.pretty");
         public static final ConfigBooleanHotkeyed DRAW_HAND_ITEM_ENCHANTMENTS = new ConfigBooleanHotkeyed("betterstatus.config.draw.hand.item.enchantments", true, "", "betterstatus.config.draw.hand.item.enchantments.comment", "betterstatus.config.draw.hand.item.enchantments.pretty");
         public static final ConfigBooleanHotkeyed DRAW_MAIN_HAND_ITEM_ENCHANTMENTS = new ConfigBooleanHotkeyed("betterstatus.config.draw.main.hand.item.enchantments", true, "", "betterstatus.config.draw.main.hand.item.enchantments.comment", "betterstatus.config.draw.main.hand.item.enchantments.pretty");
         public static final ConfigBooleanHotkeyed DRAW_OFFSET_HAND_ITEM_ENCHANTMENTS = new ConfigBooleanHotkeyed("betterstatus.config.draw.offset.hand.item.enchantments", true, "", "betterstatus.config.draw.offset.hand.item.enchantments.comment", "betterstatus.config.draw.offset.hand.item.enchantments.pretty");
@@ -32,14 +34,19 @@ public class Configs implements IConfigHandler {
         public static final ConfigColor ARMOR_VALUE_FONT_COLOR = new ConfigColor("betterstatus.config.armor.value.font.color", "#008B8B8B", "betterstatus.config.armor.value.font.color.comment");
         public static final ConfigColor HUNGER_VALUE_FONT_COLOR = new ConfigColor("betterstatus.config.hunger.value.font.color", "#00886241", "betterstatus.config.hunger.value.font.color.comment");
         public static final ConfigColor AIR_VALUE_FONT_COLOR = new ConfigColor("betterstatus.config.air.value.font.color", "#006F7D88", "betterstatus.config.air.value.font.color.comment");
-        public static final ConfigColor ITEM_STATUS_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.font.color", "#00FFFFFF", "betterstatus.config.item.status.font.color.comment");
-        public static final ConfigColor ITEM_STATUS_ATTENTION_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.attention.font.color", "#00FF8A00", "betterstatus.config.item.status.attention.font.color.comment");
-        public static final ConfigColor ITEM_STATUS_WARNING_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.waring.font.color", "#00FF0000", "betterstatus.config.item.status.waring.font.color.comment");
+        public static final ConfigString ITEM_DAMAGE_PERCENTAGE_PLACES = new ConfigString("betterstatus.config.item.damage.percentage.places", "#0%", "betterstatus.config.item.damage.percentage.places.comment");
+        public static final ConfigColor ITEM_STATUS_COUNT_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.count.font.color", "#00FFFFFF", "betterstatus.config.item.status.count.font.color.comment");
+        public static final ConfigColor ITEM_STATUS_SAFE_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.safe.font.color", "#005AFF00", "betterstatus.config.item.status.safe.font.color.comment");
+        public static final ConfigColor ITEM_STATUS_SLIGHTLY_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.slightly.font.color", "#00DAFF00", "betterstatus.config.item.status.slightly.font.color.comment");
+        public static final ConfigColor ITEM_STATUS_ATTENTION_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.attention.font.color", "#00FFC000", "betterstatus.config.item.status.attention.font.color.comment");
+        public static final ConfigColor ITEM_STATUS_WARNING_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.waring.font.color", "#00FF7100", "betterstatus.config.item.status.waring.font.color.comment");
         public static final ConfigColor ITEM_STATUS_DANGER_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.danger.font.color", "#00FF0000", "betterstatus.config.item.status.danger.font.color.comment");
         public static final ConfigHotkey OPEN_CONFIG_GUI = new ConfigHotkey("betterstatus.config.hotkey.open.config.gui", "LEFT_CONTROL,B", "betterstatus.config.hotkey.open.config.gui.comment");
+        public static final ConfigHotkey LOOK_KNAPSACK_STATUS = new ConfigHotkey("betterstatus.config.hotkey.look.knapsack.status", "", "betterstatus.config.hotkey.look.knapsack.status.comment");
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
             DRAW_ITEMS_STATUS,
+            DRAW_ITEM_DAMAGE_PERCENTAGE,
             DRAW_HAND_ITEM_ENCHANTMENTS,
             DRAW_MAIN_HAND_ITEM_ENCHANTMENTS,
             DRAW_OFFSET_HAND_ITEM_ENCHANTMENTS,
@@ -50,16 +57,21 @@ public class Configs implements IConfigHandler {
             ARMOR_VALUE_FONT_COLOR,
             HUNGER_VALUE_FONT_COLOR,
             AIR_VALUE_FONT_COLOR,
-            ITEM_STATUS_FONT_COLOR,
+            ITEM_DAMAGE_PERCENTAGE_PLACES,
+            ITEM_STATUS_COUNT_FONT_COLOR,
+            ITEM_STATUS_SAFE_FONT_COLOR,
+            ITEM_STATUS_SLIGHTLY_FONT_COLOR,
             ITEM_STATUS_ATTENTION_FONT_COLOR,
             ITEM_STATUS_WARNING_FONT_COLOR,
             ITEM_STATUS_DANGER_FONT_COLOR,
-            OPEN_CONFIG_GUI
+            OPEN_CONFIG_GUI,
+            LOOK_KNAPSACK_STATUS
         );
     }
 
     public static class ENABLE {
         public static final ConfigBooleanHotkeyed DRAW_ITEMS_STATUS = ALL.DRAW_ITEMS_STATUS;
+        public static final ConfigBooleanHotkeyed DRAW_ITEM_DAMAGE_PERCENTAGE = ALL.DRAW_ITEM_DAMAGE_PERCENTAGE;
         public static final ConfigBooleanHotkeyed DRAW_HAND_ITEM_ENCHANTMENTS = ALL.DRAW_HAND_ITEM_ENCHANTMENTS;
         public static final ConfigBooleanHotkeyed DRAW_MAIN_HAND_ITEM_ENCHANTMENTS = ALL.DRAW_MAIN_HAND_ITEM_ENCHANTMENTS;
         public static final ConfigBooleanHotkeyed DRAW_OFFSET_HAND_ITEM_ENCHANTMENTS = ALL.DRAW_OFFSET_HAND_ITEM_ENCHANTMENTS;
@@ -68,6 +80,7 @@ public class Configs implements IConfigHandler {
 
         public static final ImmutableList<ConfigBooleanHotkeyed> HOTKEY_LIST = ImmutableList.of(
             DRAW_ITEMS_STATUS,
+            DRAW_ITEM_DAMAGE_PERCENTAGE,
             DRAW_HAND_ITEM_ENCHANTMENTS,
             DRAW_MAIN_HAND_ITEM_ENCHANTMENTS,
             DRAW_OFFSET_HAND_ITEM_ENCHANTMENTS,
@@ -82,7 +95,10 @@ public class Configs implements IConfigHandler {
         public static final ConfigColor ARMOR_VALUE_FONT_COLOR = ALL.ARMOR_VALUE_FONT_COLOR;
         public static final ConfigColor HUNGER_VALUE_FONT_COLOR = ALL.HUNGER_VALUE_FONT_COLOR;
         public static final ConfigColor AIR_VALUE_FONT_COLOR = ALL.AIR_VALUE_FONT_COLOR;
-        public static final ConfigColor ITEM_STATUS_FONT_COLOR = ALL.ITEM_STATUS_FONT_COLOR;
+        public static final ConfigString ITEM_DAMAGE_PERCENTAGE_PLACES = ALL.ITEM_DAMAGE_PERCENTAGE_PLACES;
+        public static final ConfigColor ITEM_STATUS_SAFE_FONT_COLOR = ALL.ITEM_STATUS_SAFE_FONT_COLOR;
+        public static final ConfigColor ITEM_STATUS_COUNT_FONT_COLOR = ALL.ITEM_STATUS_COUNT_FONT_COLOR;
+        public static final ConfigColor ITEM_STATUS_SLIGHTLY_FONT_COLOR = ALL.ITEM_STATUS_SLIGHTLY_FONT_COLOR;
         public static final ConfigColor ITEM_STATUS_ATTENTION_FONT_COLOR = ALL.ITEM_STATUS_ATTENTION_FONT_COLOR;
         public static final ConfigColor ITEM_STATUS_WARNING_FONT_COLOR = ALL.ITEM_STATUS_WARNING_FONT_COLOR;
         public static final ConfigColor ITEM_STATUS_DANGER_FONT_COLOR = ALL.ITEM_STATUS_DANGER_FONT_COLOR;
@@ -93,18 +109,23 @@ public class Configs implements IConfigHandler {
             ARMOR_VALUE_FONT_COLOR,
             HUNGER_VALUE_FONT_COLOR,
             AIR_VALUE_FONT_COLOR,
+            ITEM_DAMAGE_PERCENTAGE_PLACES,
+            ITEM_STATUS_COUNT_FONT_COLOR,
+            ITEM_STATUS_SAFE_FONT_COLOR,
+            ITEM_STATUS_SLIGHTLY_FONT_COLOR,
             ITEM_STATUS_ATTENTION_FONT_COLOR,
             ITEM_STATUS_WARNING_FONT_COLOR,
-            ITEM_STATUS_DANGER_FONT_COLOR,
-            ITEM_STATUS_FONT_COLOR
+            ITEM_STATUS_DANGER_FONT_COLOR
         );
     }
 
     public static class HOTKEY {
         public static final ConfigHotkey OPEN_CONFIG_GUI = ALL.OPEN_CONFIG_GUI;
+        public static final ConfigHotkey LOOK_KNAPSACK_STATUS = ALL.LOOK_KNAPSACK_STATUS;
 
         public static final List<ConfigHotkey> HOTKEY_LIST = ImmutableList.of(
-            OPEN_CONFIG_GUI
+            OPEN_CONFIG_GUI,
+            LOOK_KNAPSACK_STATUS
         );
     }
 

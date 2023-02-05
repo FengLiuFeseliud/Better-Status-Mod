@@ -14,7 +14,7 @@
     "issues": "https://github.com/FengLiuFeseliud/Better-Status-Mod/issues"
   },
 
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/betterstatus/icon.png",
 
   "environment": "client",

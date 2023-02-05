@@ -21,6 +21,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,7 +34,8 @@ public class KnapsackManager {
     protected static final int TEXTURE_Y = 240;
     protected static final int TEXTURE_X = 81;
 
-    protected final int itemStatusFontColor = Configs.GUI.ITEM_STATUS_FONT_COLOR.getIntegerValue();
+    protected final int itemStatusFontColor = Configs.GUI.ITEM_STATUS_COUNT_FONT_COLOR.getIntegerValue();
+    protected final PlayerInventory inventory;
     protected final ItemRenderer itemRenderer;
     protected PlayerEntity player;
     private final Map<Item, Integer> knapsack = new HashMap<>();
@@ -42,6 +44,7 @@ public class KnapsackManager {
 
     public KnapsackManager(PlayerEntity player) {
         this.itemRenderer = client.getItemRenderer();
+        this.inventory = player.getInventory();
         this.player = player;
 
         this.readPlayerKnapsack();
@@ -107,8 +110,7 @@ public class KnapsackManager {
         this.knapsack.clear();
         this.knapsackEmptyStack = 0;
 
-        PlayerInventory inventory = player.getInventory();
-        for(ItemStack stack: inventory.main){
+        for(ItemStack stack: this.inventory.main){
             this.readItemStack(stack);
         }
 
@@ -130,9 +132,10 @@ public class KnapsackManager {
     }
 
     private enum Ponderance {
-        SAFE(0.66f, Configs.GUI.ITEM_STATUS_FONT_COLOR),
-        ATTENTION(0.33f, Configs.GUI.ITEM_STATUS_ATTENTION_FONT_COLOR),
-        WARNING(0.10f, Configs.GUI.ITEM_STATUS_WARNING_FONT_COLOR),
+        SAFE(0.80f, Configs.GUI.ITEM_STATUS_SAFE_FONT_COLOR),
+        SLIGHTLY(0.60f, Configs.GUI.ITEM_STATUS_SLIGHTLY_FONT_COLOR),
+        ATTENTION(0.40f, Configs.GUI.ITEM_STATUS_ATTENTION_FONT_COLOR),
+        WARNING(0.15f, Configs.GUI.ITEM_STATUS_WARNING_FONT_COLOR),
         DANGER(0, Configs.GUI.ITEM_STATUS_DANGER_FONT_COLOR);
 
         private final float percent;
@@ -211,6 +214,20 @@ public class KnapsackManager {
     }
 
     /**
+     * 获取显示耐久字符
+     * @param damage 耐久
+     * @param maxDamage 最大耐久
+     * @return 耐久字符
+     */
+    public String getDamageString(int damage, int maxDamage){
+        if (Configs.ENABLE.DRAW_ITEM_DAMAGE_PERCENTAGE.getBooleanValue()){
+            return new DecimalFormat(Configs.GUI.ITEM_DAMAGE_PERCENTAGE_PLACES.getStringValue()).format(damage / (float) maxDamage );
+        }
+
+        return damage + " / " + maxDamage;
+    }
+
+    /**
      * 绘制该物品在背包的耐久状态
      * @param matrices matrices
      * @param itemStack 物品格
@@ -226,7 +243,7 @@ public class KnapsackManager {
             this.haveDangerItem = true;
         }
 
-        client.textRenderer.draw(matrices, damage + " / " + maxDamage, x, y + 4,  this.getPonderance(damage, maxDamage).getColor());
+        client.textRenderer.draw(matrices, this.getDamageString(damage, maxDamage), x, y + 4,  this.getPonderance(damage, maxDamage).getColor());
     }
 
     /**
@@ -239,7 +256,7 @@ public class KnapsackManager {
     public void drawBackItemDamage(ItemStack itemStack, MatrixStack matrices, int x, int y){
         int maxDamage = itemStack.getMaxDamage();
         int damage = maxDamage - itemStack.getDamage();
-        String damageString = damage + " / " + maxDamage;
+        String damageString = this.getDamageString(damage, maxDamage);
         client.textRenderer.draw(matrices, damageString, x - damageString.length() * 5, y + 4,  this.getPonderance(damage, maxDamage).getColor());
     }
 
@@ -292,9 +309,7 @@ public class KnapsackManager {
      * @param y 绘制所在 Y 轴
      */
     public void drawArmorStackStatus(MatrixStack matrices, int x, int y){
-        PlayerInventory inventory = this.player.getInventory();
-
-        for (ItemStack armorItem: inventory.armor) {
+        for (ItemStack armorItem: this.inventory.armor) {
             if (armorItem.isEmpty()){
                 continue;
             }
@@ -368,5 +383,29 @@ public class KnapsackManager {
 
         RenderSystem.setShaderTexture(0, BARS_TEXTURE);
         DrawableHelper.drawTexture(matrices, x - 3, y, 0, 180, 6, 12, TEXTURE_X, TEXTURE_Y);
+    }
+
+    /**
+     * 绘制快捷背包
+     * @param matrices matrices
+     * @param x 绘制所在 X 轴
+     * @param y 绘制所在 Y 轴
+     */
+    public void drawKnapsack(MatrixStack matrices, int x, int y){
+        if (this.knapsack.isEmpty()){
+            return;
+        }
+
+        int offsetY = 0, offsetX = -90;
+        for (int index = 9; index < PlayerInventory.MAIN_SIZE; index++){
+            if (index % 9 == 0){
+                offsetX += 85;
+                offsetY = 0;
+            }
+
+            this.drawItemStackStatus(this.inventory.main.get(index), matrices, x + offsetX, y + offsetY);
+            offsetY -= 18;
+        }
+
     }
 }

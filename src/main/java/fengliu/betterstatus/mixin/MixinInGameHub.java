@@ -25,7 +25,6 @@ import java.text.DecimalFormat;
 @Mixin(InGameHud.class)
 public abstract class MixinInGameHub {
     @Shadow @Final private MinecraftClient client;
-
     @Shadow private LivingEntity getRiddenEntity(){ return null; }
 
     private float maxAbsorption = 0;
@@ -348,6 +347,10 @@ public abstract class MixinInGameHub {
 
         if (Configs.ENABLE.DRAW_ITEMS_DANGER_STATUS_INFO.getBooleanValue()){
             knapsackManager.drawItemDangerStatusInfo(matrices,this.scaledWidth / 2, this.scaledHeight / 2 + 8);
+        }
+
+        if (Configs.HOTKEY.LOOK_KNAPSACK_STATUS.getKeybind().isPressed()){
+            knapsackManager.drawKnapsack(new MatrixStack(), x - 5, y - 45);
         }
     }
 
