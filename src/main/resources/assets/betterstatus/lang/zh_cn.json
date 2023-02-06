@@ -4,7 +4,12 @@
   "betterstatus.gui.tab.all": "全部",
   "betterstatus.gui.tab.enable": "启用",
   "betterstatus.gui.tab.gui": "界面",
+  "betterstatus.gui.tab.enhance": "增强",
   "betterstatus.gui.tab.hotkey": "热键",
+
+  "betterstatus.config.draw.classic.status.bar": "启用原版状态条绘制 | classic.status.bar",
+  "betterstatus.config.draw.classic.status.bar.comment": "绘制原版状态条",
+  "betterstatus.config.draw.classic.status.bar.pretty": "原版状态条",
 
   "betterstatus.config.draw.item.status": "启用主副手物品与背包空余绘制 | item.status",
   "betterstatus.config.draw.item.status.comment": "绘制主副手物品数量或耐久, 并绘制背包空余格数",
@@ -33,6 +38,10 @@
   "betterstatus.config.draw.item.danger.status.info": "启用物品耐久警告信息绘制 | item.danger.status.info",
   "betterstatus.config.draw.item.danger.status.info.comment": "当物品耐久到达界线, 在指针下方绘制警告图标",
   "betterstatus.config.draw.item.danger.status.info.pretty": "物品耐久警告",
+
+  "betterstatus.config.draw.status.effect.timer": "启用药水效果时长绘制 | status.effect.timer",
+  "betterstatus.config.draw.status.effect.timer.comment": "在药水效果图标附近绘制药水效果时长",
+  "betterstatus.config.draw.status.effect.timer.pretty": "药水效果时长",
 
   "betterstatus.config.item.damage.percentage.places": "物品耐久百分比格式 | item.damage.percentage.places",
   "betterstatus.config.item.damage.percentage.places.comment": "物品耐久百分比格式 (默认 #0%% 整数), 字符为几位小数将保留几位小数, 比如 #0.00%% 将保留两位小数\n字符小数点前的零将在不足位数时补零, 比如 #00%% 将在为一位数时在十位补零\n注意前面保留井号!!!",
@@ -69,6 +78,12 @@
 
   "betterstatus.config.item.status.danger.font.color": "危险物品状态字符绘制颜色 | item.status.danger.font.color",
   "betterstatus.config.item.status.danger.font.color.comment": "危险物品状态字符绘制颜色, 物品到达危险耐久使用颜色 (默认 #00FF0000)",
+
+  "betterstatus.config.mount.jumping.switch.bar": "在坐骑跳跃时切换跳跃条 | mount.jumping.switch.bar",
+  "betterstatus.config.mount.jumping.switch.bar.comment": "只有在坐骑跳跃时才切换跳跃条",
+
+  "betterstatus.config.always.render.food": "在坐骑上时依旧绘制饥饿值 | always.render.food",
+  "betterstatus.config.always.render.food.comment": "在坐骑上时依旧绘制饥饿值",
 
   "betterstatus.config.hotkey.open.config.gui": "打开配置菜单 | open.config.gui",
   "betterstatus.config.hotkey.open.config.gui.comment": "打开该菜单",

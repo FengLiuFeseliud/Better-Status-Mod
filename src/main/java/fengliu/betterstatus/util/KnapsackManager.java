@@ -22,7 +22,9 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -397,13 +399,21 @@ public class KnapsackManager {
         }
 
         int offsetY = 0, offsetX = -90;
+        List<Item> items = new ArrayList<>();
         for (int index = 9; index < PlayerInventory.MAIN_SIZE; index++){
-            if (index % 9 == 0){
+            ItemStack itemStack = this.inventory.main.get(index);
+            Item item = itemStack.getItem();
+            if (items.contains(item) || itemStack.isEmpty()){
+                continue;
+            }
+
+            if (items.size() % 9 == 0){
                 offsetX += 85;
                 offsetY = 0;
             }
 
-            this.drawItemStackStatus(this.inventory.main.get(index), matrices, x + offsetX, y + offsetY);
+            items.add(item);
+            this.drawItemStackStatus(itemStack, matrices, x + offsetX, y + offsetY);
             offsetY -= 18;
         }
 

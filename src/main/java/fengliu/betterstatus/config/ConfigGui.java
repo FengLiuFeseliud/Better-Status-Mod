@@ -18,6 +18,7 @@ public class ConfigGui extends GuiConfigsBase {
         ALL("betterstatus.gui.tab.all"),
         ENABLE("betterstatus.gui.tab.enable"),
         GUI("betterstatus.gui.tab.gui"),
+        ENHANCE("betterstatus.gui.tab.enhance"),
         HOTKEY("betterstatus.gui.tab.hotkey");
 
         private final String translationKey;
@@ -95,6 +96,8 @@ public class ConfigGui extends GuiConfigsBase {
             configs = Configs.ENABLE.HOTKEY_LIST;
         } else if(tab == ConfigGuiTab.GUI){
             configs = Configs.GUI.OPTIONS;
+        } else if(tab == ConfigGuiTab.ENHANCE){
+            configs = Configs.ENHANCE.OPTIONS;
         } else if(tab == ConfigGuiTab.HOTKEY){
             configs = Configs.HOTKEY.HOTKEY_LIST;
         } else {

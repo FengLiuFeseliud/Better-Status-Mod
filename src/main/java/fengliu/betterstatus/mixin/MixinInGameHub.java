@@ -5,11 +5,14 @@ import fengliu.betterstatus.BetterStatusClient;
 import fengliu.betterstatus.bar.*;
 import fengliu.betterstatus.config.Configs;
 import fengliu.betterstatus.util.KnapsackManager;
+import fengliu.betterstatus.util.StatusEffectHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.JumpingMount;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerManager;
@@ -17,8 +20,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.text.DecimalFormat;
 
@@ -282,10 +289,10 @@ public abstract class MixinInGameHub {
 //        foodSaturationBar.setProgress(hunger.getSaturationLevel(), 20).drawBar(matrices, x, y);
     }
 
-    @Overwrite
-    private void renderStatusBars(MatrixStack matrices){
+    @Inject(method = "renderStatusBars", at = @At("HEAD"), cancellable = true)
+    private void renderStatusBars(MatrixStack matrices, CallbackInfo info){
         PlayerEntity player = client.player;
-        if (player == null){
+        if (player == null || Configs.ENABLE.DRAW_CLASSIC_STATUS_BAR.getBooleanValue()){
             return;
         }
 
@@ -298,10 +305,12 @@ public abstract class MixinInGameHub {
             Configs.GUI.HEALTH_VALUE_FONT_COLOR.getIntegerValue()
         ).setProgress(player.getHealth(), player.getMaxHealth()).drawBar(matrices, x, y);
 
-        if (riddenHeartBar.getValue() > 0){
-            this.drawHungerBar(matrices, player, x + 101, y - 10);
-        } else {
-            this.drawHungerBar(matrices, player, x + 101, y);
+        if (Configs.ENHANCE.ALWAYS_RENDER_FOOD.getBooleanValue()){
+            if (riddenHeartBar.getValue() > 0){
+                this.drawHungerBar(matrices, player, x + 101, y - 10);
+            } else {
+                this.drawHungerBar(matrices, player, x + 101, y);
+            }
         }
 
         if(maxAbsorption == 0 || absorption >= maxAbsorption){
@@ -325,6 +334,23 @@ public abstract class MixinInGameHub {
         } else {
             armorBar.drawBar(matrices, x, y - 20);
         }
+
+        info.cancel();
+    }
+
+    @Inject(method = "render", at = @At("RETURN"))
+    private void renderItemStatus(MatrixStack matrices, float tickDelta, CallbackInfo info){
+        PlayerEntity player = client.player;
+        if (player == null){
+            return;
+        }
+
+        if (player.isCreative() || player.isSpectator()){
+            return;
+        }
+
+        int[] scaled = this.getScaledXY();
+        int x = scaled[0], y = scaled[1];
 
         KnapsackManager knapsackManager = new KnapsackManager(player);
         if (Configs.ENABLE.DRAW_ITEMS_STATUS.getBooleanValue()){
@@ -354,8 +380,12 @@ public abstract class MixinInGameHub {
         }
     }
 
-    @Overwrite
-    private void renderMountHealth(MatrixStack matrices){
+    @Inject(method = "renderMountHealth", at = @At("HEAD"), cancellable = true)
+    private void renderMountHealth(MatrixStack matrices, CallbackInfo info){
+        if (Configs.ENABLE.DRAW_CLASSIC_STATUS_BAR.getBooleanValue()){
+            return;
+        }
+
         LivingEntity ridden = this.getRiddenEntity();
         if (ridden == null){
             riddenHeartBar.setProgress(0, 0);
@@ -365,6 +395,53 @@ public abstract class MixinInGameHub {
         int x = scaled[0], y = scaled[1];
 
         riddenHeartBar.setProgress(ridden.getHealth(), ridden.getMaxHealth()).drawBar(matrices, x + 101, y);
+
+        info.cancel();
+    }
+
+    @ModifyVariable(method = "renderMountHealth", at = @At(value = "STORE", ordinal = 0), ordinal = 2)
+    private int mountHealthUp(int y) {
+        assert client.interactionManager != null;
+        if (client.interactionManager.hasStatusBars() && Configs.ENHANCE.ALWAYS_RENDER_FOOD.getBooleanValue()) {
+            y -= 10;
+        }
+
+        return y;
+    }
+
+    @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;getHeartCount(Lnet/minecraft/entity/LivingEntity;)I"))
+    private int alwaysRenderFood(InGameHud inGameHud, LivingEntity entity) {
+        if (Configs.ENHANCE.ALWAYS_RENDER_FOOD.getBooleanValue()){
+            return 0;
+        }
+
+        return 1;
+    }
+
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getJumpingMount()Lnet/minecraft/entity/JumpingMount;"))
+    private JumpingMount switchBar(ClientPlayerEntity player) {
+        JumpingMount jumpingMount = player.getJumpingMount();
+        assert client.interactionManager != null;
+        if (!client.interactionManager.hasExperienceBar()
+            || client.options.jumpKey.isPressed() || player.getMountJumpStrength() > 0
+            || !Configs.ENHANCE.MOUNT_JUMPING_SWITCH_JUMP_BAR.getBooleanValue()){
+
+            return jumpingMount;
+        }
+
+        return null;
+    }
+
+    @Inject(method = "renderStatusEffectOverlay", at = @At("RETURN"))
+    protected void renderStatusEffectOverlay(MatrixStack matrices, CallbackInfo info) {
+        PlayerEntity player = client.player;
+        if (player == null){
+            return;
+        }
+
+        if (Configs.ENABLE.DRAW_STATUS_EFFECT_TIMER.getBooleanValue()){
+            StatusEffectHelper.drawStatusEffectTimer(player, matrices, this.scaledWidth);
+        }
     }
 
 }
