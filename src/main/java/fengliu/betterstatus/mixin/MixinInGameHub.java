@@ -31,6 +31,7 @@ import java.text.DecimalFormat;
 
 @Mixin(InGameHud.class)
 public abstract class MixinInGameHub {
+    @Shadow @Final private static Identifier PUMPKIN_BLUR;
     @Shadow @Final private MinecraftClient client;
     @Shadow private LivingEntity getRiddenEntity(){ return null; }
 
@@ -378,6 +379,9 @@ public abstract class MixinInGameHub {
         if (Configs.HOTKEY.LOOK_KNAPSACK_STATUS.getKeybind().isPressed()){
             knapsackManager.drawKnapsack(new MatrixStack(), x - 5, y - 45);
         }
+
+
+
     }
 
     @Inject(method = "renderMountHealth", at = @At("HEAD"), cancellable = true)
@@ -442,6 +446,15 @@ public abstract class MixinInGameHub {
         if (Configs.ENABLE.DRAW_STATUS_EFFECT_TIMER.getBooleanValue()){
             StatusEffectHelper.drawStatusEffectTimer(player, matrices, this.scaledWidth);
         }
+    }
+
+    @Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
+    private void renderOverlay(Identifier texture, float opacity, CallbackInfo info) {
+        if (!texture.equals(PUMPKIN_BLUR) || !Configs.ENHANCE.DRAW_PUMPKIN_BLUR.getBooleanValue()){
+            return;
+        }
+
+        info.cancel();
     }
 
 }

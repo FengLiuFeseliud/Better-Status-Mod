@@ -41,6 +41,7 @@ public class Configs implements IConfigHandler {
         public static final ConfigColor ITEM_STATUS_WARNING_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.waring.font.color", "#00FF7100", "betterstatus.config.item.status.waring.font.color.comment");
         public static final ConfigColor ITEM_STATUS_DANGER_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.danger.font.color", "#00FF0000", "betterstatus.config.item.status.danger.font.color.comment");
         public static final ConfigBoolean MOUNT_JUMPING_SWITCH_JUMP_BAR = new ConfigBoolean("betterstatus.config.mount.jumping.switch.bar", true, "betterstatus.config.mount.jumping.switch.bar.comment");
+        public static final ConfigBooleanHotkeyed DRAW_PUMPKIN_BLUR = new ConfigBooleanHotkeyed("betterstatus.config.draw.pumpkin.blur", false, "", "betterstatus.config.draw.pumpkin.blur.comment", "betterstatus.config.draw.pumpkin.blur.pretty");
         public static final ConfigBoolean ALWAYS_RENDER_FOOD = new ConfigBoolean("betterstatus.config.always.render.food", true, "betterstatus.config.always.render.food.comment");
         public static final ConfigHotkey OPEN_CONFIG_GUI = new ConfigHotkey("betterstatus.config.hotkey.open.config.gui", "LEFT_CONTROL,B", "betterstatus.config.hotkey.open.config.gui.comment");
         public static final ConfigHotkey LOOK_KNAPSACK_STATUS = new ConfigHotkey("betterstatus.config.hotkey.look.knapsack.status", "", "betterstatus.config.hotkey.look.knapsack.status.comment");
@@ -67,6 +68,7 @@ public class Configs implements IConfigHandler {
             ITEM_STATUS_ATTENTION_FONT_COLOR,
             ITEM_STATUS_WARNING_FONT_COLOR,
             ITEM_STATUS_DANGER_FONT_COLOR,
+            DRAW_PUMPKIN_BLUR,
             MOUNT_JUMPING_SWITCH_JUMP_BAR,
             ALWAYS_RENDER_FOOD,
             OPEN_CONFIG_GUI,
@@ -129,12 +131,18 @@ public class Configs implements IConfigHandler {
     }
 
     public static class ENHANCE {
+        public static final ConfigBooleanHotkeyed DRAW_PUMPKIN_BLUR = ALL.DRAW_PUMPKIN_BLUR;
         public static final ConfigBoolean ALWAYS_RENDER_FOOD = ALL.ALWAYS_RENDER_FOOD;
         public static final ConfigBoolean MOUNT_JUMPING_SWITCH_JUMP_BAR = ALL.MOUNT_JUMPING_SWITCH_JUMP_BAR;
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
+            DRAW_PUMPKIN_BLUR,
             MOUNT_JUMPING_SWITCH_JUMP_BAR,
             ALWAYS_RENDER_FOOD
+        );
+
+        public static final ImmutableList<ConfigBooleanHotkeyed> HOTKEY_LIST = ImmutableList.of(
+            DRAW_PUMPKIN_BLUR
         );
     }
 

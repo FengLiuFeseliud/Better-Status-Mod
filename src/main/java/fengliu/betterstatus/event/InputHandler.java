@@ -18,6 +18,10 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
             manager.addKeybindToMap(configHotkey.getKeybind());
         }
 
+        for (ConfigBooleanHotkeyed configHotkey : Configs.ENHANCE.HOTKEY_LIST) {
+            manager.addKeybindToMap(configHotkey.getKeybind());
+        }
+
         for (IHotkey hotkey : Configs.HOTKEY.HOTKEY_LIST) {
             manager.addKeybindToMap(hotkey.getKeybind());
         }
@@ -26,6 +30,7 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
     @Override
     public void addHotkeys(IKeybindManager manager) {
         manager.addHotkeysForCategory(BetterStatusClient.MOD_ID, "betterstatus.enable.hotkeys", Configs.ENABLE.HOTKEY_LIST);
+        manager.addHotkeysForCategory(BetterStatusClient.MOD_ID, "betterstatus.enhance.hotkeys", Configs.ENHANCE.HOTKEY_LIST);
         manager.addHotkeysForCategory(BetterStatusClient.MOD_ID, "betterstatus.hotkeys", Configs.HOTKEY.HOTKEY_LIST);
     }
 }

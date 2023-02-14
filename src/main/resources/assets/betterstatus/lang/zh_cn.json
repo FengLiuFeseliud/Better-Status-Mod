@@ -79,6 +79,10 @@
   "betterstatus.config.item.status.danger.font.color": "危险物品状态字符绘制颜色 | item.status.danger.font.color",
   "betterstatus.config.item.status.danger.font.color.comment": "危险物品状态字符绘制颜色, 物品到达危险耐久使用颜色 (默认 #00FF0000)",
 
+  "betterstatus.config.draw.pumpkin.blur": "禁止绘制南瓜头模糊效果 | draw.pumpkin.blur",
+  "betterstatus.config.draw.pumpkin.blur.comment": "绘制效果图时判断是否为南瓜头效果材质, 是则跳过绘制",
+  "betterstatus.config.draw.pumpkin.blur.pretty": "禁止南瓜头模糊",
+
   "betterstatus.config.mount.jumping.switch.bar": "在坐骑跳跃时切换跳跃条 | mount.jumping.switch.bar",
   "betterstatus.config.mount.jumping.switch.bar.comment": "只有在坐骑跳跃时才切换跳跃条",
 
