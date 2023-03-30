@@ -12,13 +12,9 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 import java.text.DecimalFormat;
@@ -62,39 +58,6 @@ public class KnapsackManager {
         this.knapsack.put(item, itemStack.getCount());
     }
 
-    /**
-     * 统计潜影盒 Nbt 物品数量
-     * @param itemStack 潜影盒
-     */
-    protected void readBoxItemsCount(ItemStack itemStack){
-        NbtCompound nbt = itemStack.getNbt();
-        if (!itemStack.hasNbt() || nbt == null){
-            return;
-        }
-
-        if (!(itemStack.getItem() instanceof BlockItem) || !nbt.contains("BlockEntityTag", NbtCompound.COMPOUND_TYPE)){
-            return;
-        }
-
-        nbt = nbt.getCompound("BlockEntityTag");
-        if (!nbt.contains("Items", NbtCompound.LIST_TYPE)){
-            return;
-        }
-
-        NbtList boxItems = nbt.getList("Items", NbtCompound.COMPOUND_TYPE);
-        boxItems.forEach(itemNbt -> {
-            Item item = Registries.ITEM.get(new Identifier(((NbtCompound) itemNbt).getString("id")));
-            int count = ((NbtCompound) itemNbt).getInt("Count");
-
-            if (this.knapsack.containsKey(item)){
-                this.knapsack.put(item, this.knapsack.get(item) + count);
-                return;
-            }
-
-            this.knapsack.put(item, count);
-        });
-    }
-
     protected void readItemStack(ItemStack stack){
         if (stack.isEmpty() || stack.isOf(Items.AIR)){
             this.knapsackEmptyStack += 1;
@@ -102,7 +65,7 @@ public class KnapsackManager {
         }
 
         this.addItemCount(stack);
-        this.readBoxItemsCount(stack);
+        new BoxHelper(stack).statistics(this.knapsack);
     }
 
     /**
@@ -112,11 +75,10 @@ public class KnapsackManager {
         this.knapsack.clear();
         this.knapsackEmptyStack = 0;
 
-        for(ItemStack stack: this.inventory.main){
-            this.readItemStack(stack);
+        for(int index = 0; index < this.inventory.size(); index++){
+            this.readItemStack(this.inventory.getStack(index));
         }
 
-        this.readItemStack(inventory.offHand.get(0));
     }
 
     /**
@@ -185,7 +147,7 @@ public class KnapsackManager {
      * @param y 绘制所在 Y 轴
      */
     public void drawKnapsackEmptyStackCount(MatrixStack matrices, int x, int y){
-        this.itemRenderer.renderInGui(new ItemStack(Items.CHEST), x, y);
+        this.itemRenderer.renderInGui(matrices, new ItemStack(Items.CHEST), x, y);
 
         String emptyStackCountString = String.valueOf(this.knapsackEmptyStack);
         client.textRenderer.draw(matrices, emptyStackCountString, x + 20, y + 4, Ponderance.getPonderance(this.knapsackEmptyStack, PlayerInventory.MAIN_SIZE).getColor());
@@ -274,7 +236,7 @@ public class KnapsackManager {
             return;
         }
 
-        this.itemRenderer.renderInGuiWithOverrides(itemStack,  x, y, 0);
+        this.itemRenderer.renderGuiItemIcon(matrices, itemStack, x, y);
         if (itemStack.isDamageable()){
             this.drawBackItemDamage(itemStack, matrices, x - 8, y);
             return;
@@ -295,7 +257,7 @@ public class KnapsackManager {
             return;
         }
 
-        this.itemRenderer.renderGuiItemIcon(itemStack, x, y);
+        this.itemRenderer.renderGuiItemIcon(matrices, itemStack, x, y);
         if (itemStack.isDamageable()){
             this.drawItemDamage(itemStack, matrices, x + 20, y);
             return;

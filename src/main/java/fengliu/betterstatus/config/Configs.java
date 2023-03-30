@@ -28,6 +28,7 @@ public class Configs implements IConfigHandler {
         public static final ConfigBooleanHotkeyed DRAW_ARMORS_STATUS = new ConfigBooleanHotkeyed("betterstatus.config.draw.armors.status", true, "", "betterstatus.config.draw.armors.status.comment", "betterstatus.config.draw.armors.status.pretty");
         public static final ConfigBooleanHotkeyed DRAW_ITEMS_DANGER_STATUS_INFO = new ConfigBooleanHotkeyed("betterstatus.config.draw.item.danger.status.info", true, "", "betterstatus.config.draw.item.danger.status.info.comment", "betterstatus.config.draw.item.danger.status.info.pretty");
         public static final ConfigBooleanHotkeyed DRAW_STATUS_EFFECT_TIMER = new ConfigBooleanHotkeyed("betterstatus.config.draw.status.effect.timer", true, "", "betterstatus.config.draw.status.effect.timer.comment", "betterstatus.config.draw.status.effect.timer.pretty");
+        public static final ConfigBooleanHotkeyed DRAW_BOX_MAIN_ITEM = new ConfigBooleanHotkeyed("betterstatus.config.draw.box.main.item", false, "", "betterstatus.config.draw.box.main.item.comment", "betterstatus.config.draw.box.main.item.pretty");
         public static final ConfigColor HEALTH_VALUE_FONT_COLOR = new ConfigColor("betterstatus.config.health.value.font.color", "#00890000", "betterstatus.config.health.value.font.color.comment");
         public static final ConfigColor ABSORPTION_VALUE_FONT_COLOR = new ConfigColor("betterstatus.config.absorption.value.font.color", "#00886023", "betterstatus.config.absorption.value.font.color.comment");
         public static final ConfigColor ARMOR_VALUE_FONT_COLOR = new ConfigColor("betterstatus.config.armor.value.font.color", "#008B8B8B", "betterstatus.config.armor.value.font.color.comment");
@@ -41,7 +42,10 @@ public class Configs implements IConfigHandler {
         public static final ConfigColor ITEM_STATUS_WARNING_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.waring.font.color", "#00FF7100", "betterstatus.config.item.status.waring.font.color.comment");
         public static final ConfigColor ITEM_STATUS_DANGER_FONT_COLOR = new ConfigColor("betterstatus.config.item.status.danger.font.color", "#00FF0000", "betterstatus.config.item.status.danger.font.color.comment");
         public static final ConfigBoolean MOUNT_JUMPING_SWITCH_JUMP_BAR = new ConfigBoolean("betterstatus.config.mount.jumping.switch.bar", true, "betterstatus.config.mount.jumping.switch.bar.comment");
-        public static final ConfigBooleanHotkeyed DRAW_PUMPKIN_BLUR = new ConfigBooleanHotkeyed("betterstatus.config.draw.pumpkin.blur", false, "", "betterstatus.config.draw.pumpkin.blur.comment", "betterstatus.config.draw.pumpkin.blur.pretty");
+        public static final ConfigBooleanHotkeyed PROHIBIT_DRAW_OVERLAY = new ConfigBooleanHotkeyed("betterstatus.config.prohibit.draw.overlay", false, "", "betterstatus.config.prohibit.draw.overlay.comment", "betterstatus.config.prohibit.draw.overlay.pretty");
+        public static final ConfigBooleanHotkeyed PROHIBIT_DRAW_PUMPKIN_BLUR = new ConfigBooleanHotkeyed("betterstatus.config.prohibit.draw.pumpkin.blur", false, "", "betterstatus.config.prohibit.draw.pumpkin.blur.comment", "betterstatus.config.prohibit.draw.pumpkin.blur.pretty");
+        public static final ConfigBooleanHotkeyed PROHIBIT_DRAW_POWDER_SNOW_OUTLINE = new ConfigBooleanHotkeyed("betterstatus.config.prohibit.draw.powder.snow.outline", false, "", "betterstatus.config.prohibit.draw.powder.snow.outline.comment", "betterstatus.config.prohibit.draw.powder.snow.outline.pretty");
+        public static final ConfigBooleanHotkeyed PROHIBIT_DRAW_SPYGLASS_SCOPE = new ConfigBooleanHotkeyed("betterstatus.config.prohibit.draw.spyglass.scope", false, "", "betterstatus.config.prohibit.draw.spyglass.scope.comment", "betterstatus.config.prohibit.draw.spyglass.scope.pretty");
         public static final ConfigBoolean ALWAYS_RENDER_FOOD = new ConfigBoolean("betterstatus.config.always.render.food", true, "betterstatus.config.always.render.food.comment");
         public static final ConfigHotkey OPEN_CONFIG_GUI = new ConfigHotkey("betterstatus.config.hotkey.open.config.gui", "LEFT_CONTROL,B", "betterstatus.config.hotkey.open.config.gui.comment");
         public static final ConfigHotkey LOOK_KNAPSACK_STATUS = new ConfigHotkey("betterstatus.config.hotkey.look.knapsack.status", "", "betterstatus.config.hotkey.look.knapsack.status.comment");
@@ -68,7 +72,10 @@ public class Configs implements IConfigHandler {
             ITEM_STATUS_ATTENTION_FONT_COLOR,
             ITEM_STATUS_WARNING_FONT_COLOR,
             ITEM_STATUS_DANGER_FONT_COLOR,
-            DRAW_PUMPKIN_BLUR,
+            PROHIBIT_DRAW_OVERLAY,
+            PROHIBIT_DRAW_PUMPKIN_BLUR,
+            PROHIBIT_DRAW_POWDER_SNOW_OUTLINE,
+            PROHIBIT_DRAW_SPYGLASS_SCOPE,
             MOUNT_JUMPING_SWITCH_JUMP_BAR,
             ALWAYS_RENDER_FOOD,
             OPEN_CONFIG_GUI,
@@ -86,6 +93,7 @@ public class Configs implements IConfigHandler {
         public static final ConfigBooleanHotkeyed DRAW_ARMORS_STATUS = ALL.DRAW_ARMORS_STATUS;
         public static final ConfigBooleanHotkeyed DRAW_ITEMS_DANGER_STATUS_INFO = ALL.DRAW_ITEMS_DANGER_STATUS_INFO;
         public static final ConfigBooleanHotkeyed DRAW_STATUS_EFFECT_TIMER = ALL.DRAW_STATUS_EFFECT_TIMER;
+        public static final ConfigBooleanHotkeyed DRAW_BOX_MAIN_ITEM = ALL.DRAW_BOX_MAIN_ITEM;
 
         public static final ImmutableList<ConfigBooleanHotkeyed> HOTKEY_LIST = ImmutableList.of(
             DRAW_CLASSIC_STATUS_BAR,
@@ -96,7 +104,8 @@ public class Configs implements IConfigHandler {
             DRAW_OFFSET_HAND_ITEM_ENCHANTMENTS,
             DRAW_ARMORS_STATUS,
             DRAW_ITEMS_DANGER_STATUS_INFO,
-            DRAW_STATUS_EFFECT_TIMER
+            DRAW_STATUS_EFFECT_TIMER,
+            DRAW_BOX_MAIN_ITEM
         );
     }
 
@@ -131,18 +140,27 @@ public class Configs implements IConfigHandler {
     }
 
     public static class ENHANCE {
-        public static final ConfigBooleanHotkeyed DRAW_PUMPKIN_BLUR = ALL.DRAW_PUMPKIN_BLUR;
+        public static final ConfigBooleanHotkeyed PROHIBIT_DRAW_OVERLAY = ALL.PROHIBIT_DRAW_OVERLAY;
+        public static final ConfigBooleanHotkeyed PROHIBIT_DRAW_PUMPKIN_BLUR = ALL.PROHIBIT_DRAW_PUMPKIN_BLUR;
+        public static final ConfigBooleanHotkeyed PROHIBIT_DRAW_POWDER_SNOW_OUTLINE = ALL.PROHIBIT_DRAW_POWDER_SNOW_OUTLINE;
+        public static final ConfigBooleanHotkeyed PROHIBIT_DRAW_SPYGLASS_SCOPE = ALL.PROHIBIT_DRAW_SPYGLASS_SCOPE;
         public static final ConfigBoolean ALWAYS_RENDER_FOOD = ALL.ALWAYS_RENDER_FOOD;
         public static final ConfigBoolean MOUNT_JUMPING_SWITCH_JUMP_BAR = ALL.MOUNT_JUMPING_SWITCH_JUMP_BAR;
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
-            DRAW_PUMPKIN_BLUR,
+            PROHIBIT_DRAW_OVERLAY,
+            PROHIBIT_DRAW_PUMPKIN_BLUR,
+            PROHIBIT_DRAW_SPYGLASS_SCOPE,
+            PROHIBIT_DRAW_POWDER_SNOW_OUTLINE,
             MOUNT_JUMPING_SWITCH_JUMP_BAR,
             ALWAYS_RENDER_FOOD
         );
 
         public static final ImmutableList<ConfigBooleanHotkeyed> HOTKEY_LIST = ImmutableList.of(
-            DRAW_PUMPKIN_BLUR
+            PROHIBIT_DRAW_OVERLAY,
+            PROHIBIT_DRAW_PUMPKIN_BLUR,
+            PROHIBIT_DRAW_SPYGLASS_SCOPE,
+            PROHIBIT_DRAW_POWDER_SNOW_OUTLINE
         );
     }
 

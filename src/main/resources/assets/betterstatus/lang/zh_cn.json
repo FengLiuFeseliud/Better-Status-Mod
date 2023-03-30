@@ -43,6 +43,10 @@
   "betterstatus.config.draw.status.effect.timer.comment": "在药水效果图标附近绘制药水效果时长",
   "betterstatus.config.draw.status.effect.timer.pretty": "药水效果时长",
 
+  "betterstatus.config.draw.box.main.item": "启用潜影盒主物品显示 | box.main.item",
+  "betterstatus.config.draw.box.main.item.comment": "在潜影盒只有一种物品时绘制该物品",
+  "betterstatus.config.draw.box.main.item.pretty": "潜影盒主物品显示",
+
   "betterstatus.config.item.damage.percentage.places": "物品耐久百分比格式 | item.damage.percentage.places",
   "betterstatus.config.item.damage.percentage.places.comment": "物品耐久百分比格式 (默认 #0%% 整数), 字符为几位小数将保留几位小数, 比如 #0.00%% 将保留两位小数\n字符小数点前的零将在不足位数时补零, 比如 #00%% 将在为一位数时在十位补零\n注意前面保留井号!!!",
 
@@ -79,9 +83,21 @@
   "betterstatus.config.item.status.danger.font.color": "危险物品状态字符绘制颜色 | item.status.danger.font.color",
   "betterstatus.config.item.status.danger.font.color.comment": "危险物品状态字符绘制颜色, 物品到达危险耐久使用颜色 (默认 #00FF0000)",
 
-  "betterstatus.config.draw.pumpkin.blur": "禁止绘制南瓜头模糊效果 | draw.pumpkin.blur",
-  "betterstatus.config.draw.pumpkin.blur.comment": "绘制效果图时判断是否为南瓜头效果材质, 是则跳过绘制",
-  "betterstatus.config.draw.pumpkin.blur.pretty": "禁止南瓜头模糊",
+  "betterstatus.config.prohibit.draw.overlay": "禁止绘制所有覆盖图 | prohibit.draw.overlay",
+  "betterstatus.config.prohibit.draw.overlay.comment": "跳过绘制覆盖图",
+  "betterstatus.config.prohibit.draw.overlay.pretty": "禁止绘制覆盖图",
+
+  "betterstatus.config.prohibit.draw.pumpkin.blur": "禁止绘制南瓜头覆盖图 | prohibit.draw.pumpkin.blur",
+  "betterstatus.config.prohibit.draw.pumpkin.blur.comment": "绘制覆盖图时判断是否为南瓜头效果材质, 是则跳过绘制",
+  "betterstatus.config.prohibit.draw.pumpkin.blur.pretty": "禁止南瓜头模糊",
+
+  "betterstatus.config.prohibit.draw.powder.snow.outline": "禁止绘制细雪覆盖图 | prohibit.draw.powder.snow.outline",
+  "betterstatus.config.prohibit.draw.powder.snow.outline.comment": "绘制覆盖图时判断是否为细雪效果材质, 是则跳过绘制",
+  "betterstatus.config.prohibit.draw.powder.snow.outline.pretty": "禁止细雪效果",
+
+  "betterstatus.config.prohibit.draw.spyglass.scope": "禁止绘制望远镜覆盖图 | prohibit.draw.spyglass.scope",
+  "betterstatus.config.prohibit.draw.spyglass.scope.comment": "绘制覆盖图时判断是否为望远镜效果材质, 是则跳过绘制",
+  "betterstatus.config.prohibit.draw.spyglass.scope.pretty": "禁止望远镜覆盖图",
 
   "betterstatus.config.mount.jumping.switch.bar": "在坐骑跳跃时切换跳跃条 | mount.jumping.switch.bar",
   "betterstatus.config.mount.jumping.switch.bar.comment": "只有在坐骑跳跃时才切换跳跃条",

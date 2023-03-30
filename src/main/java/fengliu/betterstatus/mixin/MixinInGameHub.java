@@ -32,6 +32,8 @@ import java.text.DecimalFormat;
 @Mixin(InGameHud.class)
 public abstract class MixinInGameHub {
     @Shadow @Final private static Identifier PUMPKIN_BLUR;
+    @Shadow @Final private static Identifier POWDER_SNOW_OUTLINE;
+    @Shadow @Final private static Identifier SPYGLASS_SCOPE;
     @Shadow @Final private MinecraftClient client;
     @Shadow private LivingEntity getRiddenEntity(){ return null; }
 
@@ -449,12 +451,27 @@ public abstract class MixinInGameHub {
     }
 
     @Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
-    private void renderOverlay(Identifier texture, float opacity, CallbackInfo info) {
-        if (!texture.equals(PUMPKIN_BLUR) || !Configs.ENHANCE.DRAW_PUMPKIN_BLUR.getBooleanValue()){
+    private void renderOverlay(MatrixStack matrices, Identifier texture, float opacity, CallbackInfo info) {
+        if (Configs.ENHANCE.PROHIBIT_DRAW_OVERLAY.getBooleanValue()){
+            info.cancel();
             return;
         }
 
-        info.cancel();
+        if (texture.equals(PUMPKIN_BLUR) && Configs.ENHANCE.PROHIBIT_DRAW_PUMPKIN_BLUR.getBooleanValue()){
+            info.cancel();
+            return;
+        }
+
+        if (texture.equals(POWDER_SNOW_OUTLINE) && Configs.ENHANCE.PROHIBIT_DRAW_POWDER_SNOW_OUTLINE.getBooleanValue()){
+            info.cancel();
+        }
+
     }
 
+    @Inject(method = "renderSpyglassOverlay", at = @At("HEAD"), cancellable = true)
+    private void renderSpyglassOverlay(MatrixStack matrices, float scale, CallbackInfo info) {
+        if (Configs.ENHANCE.PROHIBIT_DRAW_SPYGLASS_SCOPE.getBooleanValue() || Configs.ENHANCE.PROHIBIT_DRAW_OVERLAY.getBooleanValue()){
+            info.cancel();
+        }
+    }
 }
